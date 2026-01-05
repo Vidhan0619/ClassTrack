@@ -1,0 +1,233 @@
+/* =========================
+   ROOT VARIABLES (THEME)
+========================= */
+:root {
+    --deep-teal: #004443;
+    --dark-teal: #01615F;
+    --teal: #188F8B;
+
+    --gold: #D4AA3A;
+    --soft-gold: #DCBF57;
+    --highlight-yellow: #FCF876;
+
+    --text-main: #ffffff;
+    --text-muted: rgba(255,255,255,0.9);
+
+    --card-bg: #ffffff;
+}
+
+/* =========================
+   RESET
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+/* =========================
+   ANIMATED BACKGROUND
+========================= */
+body {
+    min-height: 100vh;
+    color: var(--text-main);
+
+    background: linear-gradient(
+        135deg,
+        #004443,
+        #01615F,
+        #188F8B,
+        #DCBF57,
+        #188F8B,
+        #01615F
+    );
+
+    background-size: 400% 400%;
+    animation: bgFlow 26s ease-in-out infinite;
+}
+
+@keyframes bgFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* =========================
+   NAVBAR
+========================= */
+.navbar {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.logo-area h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--deep-teal);
+    line-height: 1;
+}
+
+.logo-area span {
+    font-size: 13px;
+    color: var(--dark-teal);
+}
+
+/* =========================
+   LOGIN LAYOUT (MOBILE FIRST)
+========================= */
+.login-container {
+    max-width: 1200px;
+    margin: 40px auto 60px;
+    padding: 0 20px;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
+/* =========================
+   LOGIN CARD (TOP ON MOBILE)
+========================= */
+.login-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 40px 28px;
+    text-align: center;
+
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+}
+
+.login-card h3 {
+    font-size: 26px;
+    margin-bottom: 6px;
+    color: var(--deep-teal);
+}
+
+.subtext {
+    font-size: 14px;
+    color: #475569;
+    margin-bottom: 28px;
+}
+
+/* =========================
+   LOGIN BUTTON
+========================= */
+.google-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+
+    background: linear-gradient(
+        135deg,
+        var(--gold),
+        var(--highlight-yellow)
+    );
+
+    color: var(--deep-teal);
+    font-size: 16px;
+    font-weight: 600;
+
+    box-shadow: 0 12px 26px rgba(212,170,58,0.45);
+}
+
+.secure {
+    margin-top: 22px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* =========================
+   INFO SECTION (STACKED)
+========================= */
+.info {
+    text-align: left;
+}
+
+.glow-dot {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+
+    background: radial-gradient(
+        circle at top left,
+        var(--highlight-yellow),
+        var(--soft-gold),
+        var(--teal),
+        var(--deep-teal)
+    );
+
+    box-shadow:
+        0 0 35px rgba(212,170,58,0.6),
+        0 0 60px rgba(24,143,139,0.5);
+}
+
+.info h2 {
+    font-size: 30px;
+    margin-bottom: 16px;
+}
+
+.info p {
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.info ul {
+    list-style: none;
+}
+
+.info li {
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #eafffb;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.footer {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 20px;
+}
+
+/* =========================
+   TABLET & DESKTOP
+========================= */
+@media (min-width: 900px) {
+
+    .login-container {
+        margin: 80px auto;
+        padding: 0 60px;
+
+        grid-template-columns: 1.2fr 1fr;
+        gap: 80px;
+        align-items: center;
+    }
+
+    .login-card {
+        padding: 48px 44px;
+    }
+
+    .info h2 {
+        font-size: 44px;
+    }
+
+    .glow-dot {
+        width: 80px;
+        height: 80px;
+    }
+
+    .logo-area h1 {
+        font-size: 32px;
+    }
+}

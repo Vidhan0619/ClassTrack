@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login | ClassTrack</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
+</head>
+
+<body class="admin-page">
+
+<main class="admin-wrapper">
+
+  <!-- Brand -->
+  <div class="admin-brand">
+    <h1 class="logo">ClassTrack</h1>
+    <p class="motto">Admin Panel</p>
+  </div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Admin Login</h1>
+    <p>Authorized access only</p>
+  </div>
+
+<!-- Login Card -->
+    <div class="admin-login-card">
+
+        <input type="text" id="adminId" placeholder="Admin ID">
+        <input type="password" id="adminPassword" placeholder="Password">
+
+        <button id="loginBtn">Login</button>
+
+        <p id="errorMsg" class="error-msg"></p>
+
+    </div>
+</main>
+
+
+
+<script>
+/* ===============================
+   ADMIN CREDENTIALS (MANUAL)
+================================ */
+const adminIds = ["admin01", "admin02", "superadmin"];
+const adminPasswords = ["admin@123", "class@track", "root123"];
+
+/* ===============================
+   LOGIN LOGIC
+================================ */
+document.getElementById("loginBtn").addEventListener("click", () => {
+    const id = document.getElementById("adminId").value.trim();
+    const password = document.getElementById("adminPassword").value.trim();
+    const errorMsg = document.getElementById("errorMsg");
+
+    const index = adminIds.indexOf(id);
+
+    if (index === -1) {
+        errorMsg.innerText = "Invalid Admin ID";
+        return;
+    }
+
+    if (adminPasswords[index] !== password) {
+        errorMsg.innerText = "Incorrect Password";
+        return;
+    }
+
+    // ✅ Success
+    errorMsg.innerText = "";
+    sessionStorage.setItem("adminLoggedIn", "true");
+    window.location.href = "admindash.html";
+});
+</script>
+
+</body>
+</html>

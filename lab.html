@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratories | ClassTrack</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="lab-software.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<header class="navbar">
+
+  <div class="nav-left">
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="logo-section">
+      <span class="logo">ClassTrack</span>
+      <p class="motto">Check availability before you walk in</p>
+    </div>
+  </div>
+
+  <nav class="nav-menu" id="navMenu">
+    <a href="dashboard.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="class.html"><i class="fa-solid fa-book"></i> Class</a>
+    <a href="lab.html" class="active"><i class="fa-solid fa-flask"></i> Lab</a>
+    <a href="notice.html"><i class="fa-solid fa-bullhorn"></i> Notice</a>
+    <a href="community.html"><i class="fa-solid fa-users"></i> Community</a>
+  </nav>
+
+  <div class="nav-actions">
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="page-container">
+
+    <div class="page-header">
+        <h1><i class="fa-solid fa-flask"></i> Laboratories</h1>
+        <p>Browse all laboratories and check their availability</p>
+    </div>
+
+    <!-- Search -->
+    <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search laboratory..." id="searchInput">
+    </div>
+
+    <!-- Availability Cards -->
+    <div class="cards" id="labCards"></div>
+
+    <!-- ================= SOFTWARE SECTION ================= -->
+    <section class="software-section">
+
+        <h2><i class="fa-solid fa-desktop"></i> Installed Software</h2>
+        <p class="software-subtitle">
+            All computers in a laboratory have the same software configuration
+        </p>
+
+        <div class="software-grid">
+
+            <div class="software-card">
+                <h3>💻 F106A</h3>
+                <ul>
+                    <li><i class="fa-solid fa-code"></i> VS Code</li>
+                    <li><i class="fa-brands fa-python"></i> Python</li>
+                    <li><i class="fa-solid fa-database"></i> MySQL</li>
+                    <li><i class="fa-brands fa-java"></i> Java</li>
+                </ul>
+            </div>
+
+            <div class="software-card">
+                <h3>🧪 F206</h3>
+                <ul>
+                    <li><i class="fa-solid fa-microchip"></i> MATLAB</li>
+                    <li><i class="fa-solid fa-wave-square"></i> Multisim</li>
+                    <li><i class="fa-solid fa-bolt"></i> Proteus</li>
+                </ul>
+            </div>
+
+            <div class="software-card">
+                <h3>🖥️ F106B</h3>
+                <ul>
+                    <li><i class="fa-solid fa-cube"></i> AutoCAD</li>
+                    <li><i class="fa-solid fa-gears"></i> SolidWorks</li>
+                    <li><i class="fa-solid fa-drafting-compass"></i> CATIA</li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<script type="module">
+/* ===== FIREBASE & EXISTING LOGIC (UNCHANGED) ===== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
+    authDomain: "classtrack-87c00.firebaseapp.com",
+    projectId: "classtrack-87c00"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const cardsContainer = document.getElementById("labCards");
+const searchInput = document.getElementById("searchInput");
+const logoutBtn = document.getElementById("logoutBtn");
+const menuToggle = document.getElementById("menuToggle");
+const navMenu = document.getElementById("navMenu");
+
+menuToggle.addEventListener("click", () => navMenu.classList.toggle("active"));
+
+let allRooms = [];
+
+onAuthStateChanged(auth, user => {
+    if (!user) window.location.replace("index.html");
+    else loadClassrooms();
+});
+
+function timeToMinutes(time) {
+    const [h, m] = time.split(":").map(Number);
+    return h * 60 + m;
+}
+
+function getRoomStatus(schedule) {
+    const today = new Date().toLocaleString("en-US", { weekday: "short" });
+    const now = new Date();
+    const current = now.getHours() * 60 + now.getMinutes();
+
+    for (let s of schedule || []) {
+        if (s.day === today) {
+            const start = timeToMinutes(s.start);
+            const end = timeToMinutes(s.end);
+            if (current >= start && current <= end) return "Occupied";
+        }
+    }
+    return "Available";
+}
+
+async function loadClassrooms() {
+    const snapshot = await getDocs(collection(db, "Classroom"));
+    allRooms = snapshot.docs
+        .filter(d => d.data().type === "Lab")
+        .map(d => ({ id: d.id, ...d.data() }));
+    renderCards();
+}
+
+function renderCards(searchText = "") {
+    cardsContainer.innerHTML = "";
+    allRooms
+        .filter(r => r.id.toLowerCase().includes(searchText))
+        .forEach(room => {
+            const status = getRoomStatus(room.schedule || []);
+            cardsContainer.innerHTML += `
+                <div class="card ${status.toLowerCase()}">
+                    <span>${room.id}</span>
+                    <span class="status">${status}</span>
+                </div>
+            `;
+        });
+}
+
+searchInput.addEventListener("input", e =>
+    renderCards(e.target.value.toLowerCase())
+);
+
+logoutBtn.addEventListener("click", () => signOut(auth));
+</script>
+
+</body>
+</html>

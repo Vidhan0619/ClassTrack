@@ -1,0 +1,418 @@
+/* ===============================
+   ROOT VARIABLES
+================================ */
+:root {
+    --deep-teal: #004443;
+    --dark-teal: #01615F;
+    --teal: #188F8B;
+
+    --gold: #D4AA3A;
+    --soft-gold: #DCBF57;
+
+    --bg-page: #f5f8f7;
+    --bg-card: #ffffff;
+
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+
+    --available-bg: rgba(24, 143, 139, 0.15);
+    --available-text: #188F8B;
+
+    --occupied-bg: rgba(212, 170, 58, 0.25);
+    --occupied-text: #D4AA3A;
+}
+
+/* ===============================
+   RESET
+================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ===============================
+   PAGE BASE
+================================ */
+body {
+    background: linear-gradient(135deg, #e9f3f2, #f5f8f7);
+    color: var(--text-main);
+}
+
+/* ===============================
+   NAVBAR
+================================ */
+.navbar {
+    max-width: 1400px;
+    margin: 24px auto 32px;
+    padding: 18px 24px;
+
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* LEFT GROUP */
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* Hamburger */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: var(--deep-teal);
+    cursor: pointer;
+}
+
+/* Brand */
+.logo {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--deep-teal);
+}
+
+.motto {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* Nav links */
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    font-weight: 500;
+    color: var(--dark-teal);
+    opacity: 0.8;
+}
+
+.nav-menu a.active,
+.nav-menu a:hover {
+    opacity: 1;
+}
+
+/* Actions */
+.logout-btn {
+    border-radius: 999px;
+    padding: 8px 18px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+
+    background: linear-gradient(135deg, var(--gold), var(--soft-gold));
+    color: var(--deep-teal);
+}
+
+/* ===============================
+   PAGE CONTAINER
+================================ */
+.page-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 40px;
+}
+
+/* Header */
+.page-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.page-header h1 {
+    font-size: 38px;
+    margin-bottom: 8px;
+    color: var(--deep-teal);
+}
+
+.page-header p {
+    color: var(--text-muted);
+}
+
+/* ===============================
+   SEARCH
+================================ */
+.search-container {
+    max-width: 520px;
+    margin: 0 auto 60px;
+    padding: 14px 22px;
+    border-radius: 999px;
+    background: #ffffff;
+
+    display: flex;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.search-container input {
+    width: 100%;
+    border: none;
+    outline: none;
+    margin-left: 12px;
+}
+
+/* ===============================
+   CARDS
+================================ */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+}
+
+.card {
+    background: var(--bg-card);
+    padding: 26px;
+    border-radius: 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 10px 22px rgba(0,0,0,0.1);
+}
+
+/* Status */
+.status {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.available .status {
+    background: var(--available-bg);
+    color: var(--available-text);
+}
+
+.occupied .status {
+    background: var(--occupied-bg);
+    color: var(--occupied-text);
+}
+
+/* ===============================
+   ADMIN LOGIN CARD
+================================ */
+.admin-login-card {
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 40px;
+    border-radius: 22px;
+    background: #ffffff;
+
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+/* ===============================
+   ADMIN FORM CONTROLS (FIX)
+================================ */
+.admin-login-card input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 999px;
+    border: 1px solid #cbd5e1;
+    font-size: 14px;
+    outline: none;
+}
+
+.admin-login-card input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 2px rgba(24,143,139,0.15);
+}
+
+.admin-login-card button {
+    padding: 14px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(
+        135deg,
+        var(--gold),
+        var(--soft-gold)
+    );
+    color: var(--deep-teal);
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.admin-login-card button:hover {
+    opacity: 0.95;
+}
+
+
+/* ===============================
+   ADMIN PAGE OVERRIDES
+================================ */
+.admin-page .nav-menu,
+.admin-page .menu-toggle {
+    display: none !important;
+}
+
+.admin-page .navbar {
+    justify-content: flex-start;
+}
+
+.admin-page .page-container {
+    padding: 80px 40px;
+}
+/* ===============================
+   ADMIN BRAND HEADER
+================================ */
+.admin-brand {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.admin-brand .logo {
+    font-size: 34px;
+}
+
+.admin-brand .motto {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* ===============================
+   ADMIN PAGE CENTERING
+================================ */
+.admin-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-page .page-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ===============================
+   MOBILE RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .motto {
+        display: none;
+    }
+
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 90px;
+        left: 16px;
+        right: 16px;
+
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 18px;
+
+        flex-direction: column;
+        gap: 14px;
+        box-shadow: 0 14px 30px rgba(0,0,0,0.2);
+        z-index: 1000;
+        align-items: flex-start;   /* ✅ LEFT ALIGN LINKS */
+        text-align: left;
+    }
+      .nav-menu a {
+        width: 100%;               /* full tap width */
+        justify-content: flex-start;
+        padding-left: 8px;         /* slight inset */
+    }
+}
+
+
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .page-container {
+        padding: 30px 16px;
+    }
+
+    .admin-page .page-container {
+        padding: 40px 16px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header h1 {
+        font-size: 26px;
+    }
+
+/* ===============================
+   ADMIN CLEAN LAYOUT (FINAL)
+================================ */
+.admin-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e9f3f2, #f5f8f7);
+}
+
+.admin-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    padding: 40px 16px;
+}
+
+/* Brand */
+.admin-brand {
+    text-align: center;
+}
+
+.admin-brand .logo {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--deep-teal);
+}
+
+.admin-brand .motto {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* Header spacing fix */
+.admin-page .page-header {
+    margin-bottom: 10px;
+}
+
+.admin-page .page-header h1 {
+    font-size: 30px;
+}
+
+.admin-page .page-header p {
+    font-size: 14px;
+}
+
+/* Login card size refinement */
+.admin-page .admin-login-card {
+    width: 100%;
+    max-width: 420px;
+}

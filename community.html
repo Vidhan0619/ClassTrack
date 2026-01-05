@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community | ClassTrack</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="common.css">
+
+    <style>
+        /* COMMUNITY CARD ENHANCEMENT */
+        .community-card {
+            background: var(--bg-card);
+            border-radius: 18px;
+            padding: 26px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 14px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .community-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .community-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--deep-teal);
+        }
+
+        .community-meta {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .community-message {
+            margin-top: 6px;
+            font-size: 15px;
+        }
+
+        .community-tag {
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .tag-senior {
+            background: rgba(24,143,139,0.15);
+            color: var(--deep-teal);
+        }
+
+        .tag-student {
+            background: rgba(212,170,58,0.25);
+            color: #92400e;
+        }
+
+        .tag-faculty {
+            background: rgba(99,102,241,0.15);
+            color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+
+  <!-- LEFT -->
+  <div class="nav-left">
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="logo-section">
+      <span class="logo">ClassTrack</span>
+      <p class="motto">Check availability before you walk in</p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav-menu" id="navMenu">
+    <a href="dashboard.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="class.html" class="active"><i class="fa-solid fa-book"></i> Class</a>
+    <a href="lab.html"><i class="fa-solid fa-flask"></i> Lab</a>
+    <a href="notice.html"><i class="fa-solid fa-bullhorn"></i> Notice</a>
+    <a href="community.html"><i class="fa-solid fa-users"></i> Community</a>
+  </nav>
+
+  <!-- RIGHT -->
+  <div class="nav-actions">
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+
+</header>
+<main class="page-container">
+
+    <div class="page-header">
+        <h1><i class="fa-solid fa-users"></i> Campus Community</h1>
+        <p>Interact with seniors, peers and faculty mentors</p>
+    </div>
+
+    <!-- COMMUNITY POSTS -->
+
+    <div class="community-card">
+        <div class="community-left">
+            <div class="community-name">👨‍🎓 Rohan Patel</div>
+            <div class="community-meta">Senior • CSE • 4th Year</div>
+            <div class="community-message">
+                Anyone needs help with DSA, internships or placements?
+            </div>
+        </div>
+        <span class="community-tag tag-senior">Senior</span>
+    </div>
+
+    <div class="community-card">
+        <div class="community-left">
+            <div class="community-name">👩‍🎓 Neha Shah</div>
+            <div class="community-meta">Student • IT • 2nd Year</div>
+            <div class="community-message">
+                Which lab is free today after 3 PM for practice?
+            </div>
+        </div>
+        <span class="community-tag tag-student">Student</span>
+    </div>
+
+    <div class="community-card">
+        <div class="community-left">
+            <div class="community-name">🧑‍🏫 Prof. Mehta</div>
+            <div class="community-meta">Faculty Mentor • Computer Dept.</div>
+            <div class="community-message">
+                Guidance session on higher studies tomorrow at 11 AM.
+            </div>
+        </div>
+        <span class="community-tag tag-faculty">Faculty</span>
+    </div>
+
+    <div class="community-card">
+        <div class="community-left">
+            <div class="community-name">👨‍🎓 Aman Verma</div>
+            <div class="community-meta">Senior • Mechanical • 3rd Year</div>
+            <div class="community-message">
+                Seniors here — ask anything about internships or projects.
+            </div>
+        </div>
+        <span class="community-tag tag-senior">Senior</span>
+    </div>
+
+</main>
+<script>
+  const menuToggle = document.getElementById("menuToggle");
+  const navMenu = document.getElementById("navMenu");
+
+  if (menuToggle) {
+    menuToggle.addEventListener("click", () => {
+      navMenu.classList.toggle("active");
+    });
+  }
+</script>
+
+</body>
+</html>

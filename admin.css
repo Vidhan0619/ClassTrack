@@ -1,0 +1,215 @@
+:root {
+  --panel-bg: #ffffff;
+  --panel-border: #e5e7eb;
+}
+
+/* ===============================
+   GLOBAL MOBILE SAFETY
+================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* ===============================
+   ADMIN HEADER (FULL WIDTH)
+================================ */
+.admin-header {
+  width: 100%;
+  padding: 16px 20px;
+  background: white;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ===============================
+   CONTAINER
+================================ */
+.admin-container {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+/* ===============================
+   SECTIONS
+================================ */
+.admin-section {
+  margin-top: 56px;
+}
+
+.admin-section h2 {
+  font-size: 24px;
+  margin-bottom: 18px;
+  color: var(--deep-teal);
+}
+
+/* ===============================
+   STATS
+================================ */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.admin-stat-card {
+  background: var(--panel-bg);
+  padding: 24px;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 12px 26px rgba(0,0,0,0.1);
+}
+
+.admin-stat-card p {
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--deep-teal);
+}
+
+/* ===============================
+   CHART
+================================ */
+.admin-chart {
+  background: var(--panel-bg);
+  padding: 24px;
+  border-radius: 22px;
+  box-shadow: 0 12px 26px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.admin-chart canvas {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* ===============================
+   TABLE (SCROLL SAFE)
+================================ */
+.table-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 600px; /* safe for mobile */
+  border-collapse: collapse;
+  background: var(--panel-bg);
+  border-radius: 16px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 12px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--panel-border);
+  text-align: center;
+}
+
+.admin-table th {
+  background: #f1f5f9;
+  color: var(--deep-teal);
+}
+
+/* ===============================
+   FORM
+================================ */
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.admin-form input,
+.admin-form select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+}
+
+.admin-form button {
+  width: 100%;
+  grid-column: span 2;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, var(--gold), var(--soft-gold));
+  color: var(--deep-teal);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===============================
+   STATES
+================================ */
+.available {
+  background: rgba(24,143,139,0.15);
+  color: var(--deep-teal);
+  font-weight: 600;
+}
+
+.occupied {
+  background: rgba(212,170,58,0.25);
+  color: #92400e;
+  font-weight: 600;
+}
+
+.delete-slot {
+  background: none;
+  border: none;
+  color: #b91c1c;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+/* ===============================
+   MOBILE RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+
+  .admin-header {
+    padding: 14px 16px;
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .admin-container {
+    padding: 20px 14px;
+  }
+
+  .admin-section {
+    margin-top: 36px;
+  }
+
+  .admin-chart {
+    padding: 18px;
+  }
+
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form button {
+    grid-column: span 1;
+  }
+}

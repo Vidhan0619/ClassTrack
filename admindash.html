@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Admin Panel | ClassTrack</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="admin.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="admin-page">
+
+<!-- SIMPLE ADMIN HEADER -->
+<header class="admin-header">
+  <div>
+    <span class="logo">ClassTrack</span>
+    <p class="motto">Admin Panel</p>
+  </div>
+  <button class="logout-btn" id="logoutBtn">Logout</button>
+</header>
+
+<main class="admin-container">
+
+  <div class="page-header">
+    <h1>Analytics & Management</h1>
+    <p>Monitor usage and manage schedules</p>
+  </div>
+
+  <!-- STATS -->
+  <section class="admin-stats">
+    <div class="admin-stat-card">
+      <h3>Total Classrooms</h3>
+      <p id="totalClassrooms">0</p>
+    </div>
+    <div class="admin-stat-card">
+      <h3>Total Labs</h3>
+      <p id="totalLabs">0</p>
+    </div>
+  </section>
+
+  <!-- UTILIZATION -->
+  <section class="admin-section utilization-center">
+    <h2>Weekly Utilization</h2>
+    <select id="utilizationRoom" class="admin-select"></select>
+    <div class="admin-chart">
+      <canvas id="usageChart"></canvas>
+    </div>
+  </section>
+
+  <!-- TIMETABLE -->
+  <section class="admin-section">
+    <h2>Room Availability Timetable</h2>
+    <select id="timetableRoom" class="admin-select"></select>
+
+    <div class="table-scroll">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Mon</th><th>Tue</th><th>Wed</th>
+            <th>Thu</th><th>Fri</th><th>Sat</th>
+          </tr>
+        </thead>
+        <tbody id="timetableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- EXTRA BOOKING -->
+  <section class="admin-section">
+    <h2>Book Extra Class / Lab</h2>
+    <div class="admin-form">
+      <select id="extraRoom" class="admin-select"></select>
+      <select id="extraDay" class="admin-select">
+        <option>Mon</option><option>Tue</option><option>Wed</option>
+        <option>Thu</option><option>Fri</option><option>Sat</option>
+      </select>
+      <input type="time" id="extraStart">
+      <input type="time" id="extraEnd">
+      <button id="addExtra">Add Slot</button>
+    </div>
+  </section>
+
+</main>
+
+
+<!-- ================= SCRIPT ================= -->
+<script type="module">
+
+/* AUTH CHECK */
+if (sessionStorage.getItem("adminLoggedIn") !== "true") {
+    location.href = "admin.html";
+}
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+    getFirestore, collection, getDocs, doc,
+    updateDoc, arrayUnion, arrayRemove
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* FIREBASE */
+const firebaseConfig = {
+    apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
+    authDomain: "classtrack-87c00.firebaseapp.com",
+    projectId: "classtrack-87c00"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* CONSTANTS */
+const DAYS = ["Mon","Tue","Wed","Thurs","Fri","Sat"];
+const TIMES = ["10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00"];
+
+/* ELEMENTS */
+const utilSelect = document.getElementById("utilizationRoom");
+const tableSelect = document.getElementById("timetableRoom");
+const extraRoom = document.getElementById("extraRoom");
+const timetableBody = document.getElementById("timetableBody");
+
+let rooms = [];
+let usageChart = null;
+
+/* HELPERS */
+const minutes = t => {
+    const [h,m] = t.split(":").map(Number);
+    return h * 60 + m;
+};
+
+/* AUTO DELETE EXPIRED EXTRA SLOTS */
+async function autoDeleteExpired() {
+    const now = new Date();
+    const today = DAYS[now.getDay() - 1];
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+
+    for (const room of rooms) {
+        if (!room.schedule) continue;
+
+        for (const s of room.schedule) {
+            if (s.isExtra && s.day === today && minutes(s.end) <= nowMin) {
+                await updateDoc(doc(db, "Classroom", room.id), {
+                    schedule: arrayRemove(s)
+                });
+            }
+        }
+    }
+}
+
+/* LOAD ADMIN */
+async function loadAdmin() {
+    const snap = await getDocs(collection(db, "Classroom"));
+    rooms = [];
+
+    let cls = 0, lab = 0;
+
+    snap.forEach(d => {
+        rooms.push({ id: d.id, ...d.data() });
+        d.data().type === "Classroom" ? cls++ : lab++;
+    });
+
+    document.getElementById("totalClassrooms").innerText = cls;
+    document.getElementById("totalLabs").innerText = lab;
+
+    await autoDeleteExpired();
+
+    const options = rooms.map(r => `<option value="${r.id}">${r.id}</option>`).join("");
+    utilSelect.innerHTML = tableSelect.innerHTML = extraRoom.innerHTML = options;
+
+    renderChart(utilSelect.value);
+    renderTable(tableSelect.value);
+}
+
+/* CHART */
+function renderChart(roomId) {
+    const room = rooms.find(r => r.id === roomId);
+    const usage = { Mon:0, Tue:0, Wed:0, Thurs:0, Fri:0, Sat:0 };
+
+    room?.schedule?.forEach(s => {
+        usage[s.day] += (minutes(s.end) - minutes(s.start)) / 60;
+    });
+
+    if (usageChart) usageChart.destroy();
+
+    usageChart = new Chart(document.getElementById("usageChart"), {
+        type: "bar",
+        data: {
+            labels: DAYS,
+            datasets: [{
+                label: roomId,
+                data: DAYS.map(d => usage[d])
+            }]
+        },
+        options: { responsive: true }
+    });
+}
+
+/* TIMETABLE */
+function renderTable(roomId) {
+    timetableBody.innerHTML = "";
+    const room = rooms.find(r => r.id === roomId);
+
+    TIMES.forEach(time => {
+        let row = `<tr><td>${time}</td>`;
+        DAYS.forEach(day => {
+            const slot = room?.schedule?.find(s =>
+                s.day === day &&
+                minutes(time) >= minutes(s.start) &&
+                minutes(time) < minutes(s.end)
+            );
+
+            row += slot
+                ? `<td class="occupied">Occupied
+                    ${slot.isExtra ? `<button class="delete-slot" onclick='removeSlot("${roomId}",${JSON.stringify(slot)})'>✖</button>` : ""}
+                  </td>`
+                : `<td class="available">Available</td>`;
+        });
+        timetableBody.innerHTML += row + "</tr>";
+    });
+}
+
+/* MANUAL DELETE */
+window.removeSlot = async (roomId, slot) => {
+    if (!confirm("Remove extra lecture?")) return;
+    await updateDoc(doc(db, "Classroom", roomId), {
+        schedule: arrayRemove(slot)
+    });
+    loadAdmin();
+};
+
+/* EVENTS */
+utilSelect.onchange = () => renderChart(utilSelect.value);
+tableSelect.onchange = () => renderTable(tableSelect.value);
+
+document.getElementById("addExtra").onclick = async () => {
+    await updateDoc(doc(db, "Classroom", extraRoom.value), {
+        schedule: arrayUnion({
+            day: extraDay.value,
+            start: extraStart.value,
+            end: extraEnd.value,
+            isExtra: true
+        })
+    });
+    loadAdmin();
+};
+
+document.getElementById("logoutBtn").onclick = () => {
+    sessionStorage.clear();
+    location.href = "admin.html";
+};
+
+loadAdmin();
+
+</script>
+</body>
+</html>

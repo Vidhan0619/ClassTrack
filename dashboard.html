@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ClassTrack</title>
+
+    <!-- Fonts & Icons -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <!-- ===== NAVBAR ===== -->
+<header class="navbar">
+
+  <!-- LEFT GROUP -->
+  <div class="nav-left">
+    <!-- Hamburger FIRST -->
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <!-- Logo AFTER -->
+    <div class="logo-section">
+      <h2><span class="logo">ClassTrack</span></h2>
+      <p class="motto">Check availability before you walk in</p>
+    </div>
+  </div>
+
+  <!-- NAV LINKS -->
+  <nav class="nav-menu" id="navMenu">
+    <a href="dashboard.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="class.html"><i class="fa-solid fa-book"></i> Class</a>
+    <a href="lab.html"><i class="fa-solid fa-flask"></i> Lab</a>
+    <a href="admin.html"><i class="fa-solid fa-chart-simple"></i> Analysis</a>
+    <a href="notice.html"><i class="fa-solid fa-bullhorn"></i> Notice</a>
+    <a href="community.html"><i class="fa-solid fa-users"></i> Community</a>
+  </nav>
+
+  <!-- RIGHT -->
+  <div class="nav-actions">
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+</header>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main">
+      <!-- Center Circle -->
+      <div class="center-circle"></div>
+
+      <!-- Hero Text -->
+      <h1 class="hero-title">Find Available Classes & Labs Instantly</h1>
+      <p class="hero-subtitle">
+        Check whether a classroom or laboratory is currently available or
+        occupied.
+      </p>
+
+      <!-- Search -->
+      <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+          type="text"
+          placeholder="Search classroom or laboratory..."
+          id="searchInput"
+        />
+      </div>
+      <!-- ===== CLASS SECTION ===== -->
+      <section class="section" id="classSection">
+        <h2><i class="fa-solid fa-book"></i> Classrooms</h2>
+        <div class="cards" id="classCards"></div>
+      </section>
+
+      <!-- ===== LAB SECTION ===== -->
+      <section class="section" id="labSection">
+        <h2><i class="fa-solid fa-flask"></i> Laboratories</h2>
+        <div class="cards" id="labCards"></div>
+      </section>
+    </main>
+
+    <script type="module">
+      let allRooms = [];
+
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+      /* Firebase Config (SAME AS LOGIN PAGE) */
+      const firebaseConfig = {
+        apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
+        authDomain: "classtrack-87c00.firebaseapp.com",
+        projectId: "classtrack-87c00",
+        storageBucket: "classtrack-87c00.appspot.com",
+        messagingSenderId: "594642417368",
+        appId: "1:594642417368:web:b1cafb991988c1b53109ad",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      let authChecked = false;
+
+      //🔐 AUTH PROTECTION (FIXED)
+      onAuthStateChanged(auth, (user) => {
+        if (!authChecked) {
+          authChecked = true;
+
+          if (!user) {
+            window.location.replace("../login/index.html");
+          } else {
+            loadFromFirestore();
+          }
+        }
+      });
+
+
+  const menuToggle = document.getElementById("menuToggle");
+  const navMenu = document.getElementById("navMenu");
+
+  menuToggle.addEventListener("click", () => {
+    navMenu.classList.toggle("active");
+  });
+
+
+      // ================= DOM ELEMENTS =================
+      const searchInput = document.getElementById("searchInput");
+      const classCards = document.getElementById("classCards");
+      const labCards = document.getElementById("labCards");
+
+      function timeToMinutes(time) {
+        if (!time || typeof time !== "string") return null;
+        const [h, m] = time.split(":").map(Number);
+        if (isNaN(h) || isNaN(m)) return null;
+        return h * 60 + m;
+      }
+
+      function getRoomStatus(schedule) {
+        if (!Array.isArray(schedule)) return { status: "Available" };
+
+        const today = new Date().toLocaleString("en-US", { weekday: "short" });
+        const now = new Date();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+        for (let slot of schedule) {
+          if (!slot || !slot.day || !slot.start || !slot.end) continue;
+          if (slot.day !== today) continue;
+
+          const start = timeToMinutes(slot.start);
+          const end = timeToMinutes(slot.end);
+          if (start === null || end === null) continue;
+
+          if (currentMinutes >= start && currentMinutes <= end) {
+            return { status: "Occupied" };
+          }
+        }
+        return { status: "Available" };
+      }
+
+      async function loadFromFirestore() {
+        allRooms = [];
+
+        const snapshot = await getDocs(collection(db, "Classroom"));
+
+        snapshot.forEach((doc) => {
+          allRooms.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+
+        renderCards();
+      }
+      function renderCards(searchText = "") {
+        classCards.innerHTML = "";
+        labCards.innerHTML = "";
+
+        // Filter by search
+        const filtered = allRooms.filter((item) =>
+          item.id.toLowerCase().includes(searchText)
+        );
+
+        // Separate by type
+        const classrooms = filtered
+          .filter((i) => i.type === "Classroom")
+          .slice(0, 3);
+        const labs = filtered.filter((i) => i.type === "Lab").slice(0, 3);
+
+        // Render classrooms
+        classrooms.forEach((item) => {
+          const status = getRoomStatus(item.schedule).status;
+
+          const card = document.createElement("div");
+          card.className = `card ${status.toLowerCase()}`;
+          card.innerHTML = `
+      <span>${item.id}</span>
+      <span class="status">${status}</span>
+    `;
+
+          classCards.appendChild(card);
+        });
+
+        // Render labs
+        labs.forEach((item) => {
+          const status = getRoomStatus(item.schedule).status;
+
+          const card = document.createElement("div");
+          card.className = `card ${status.toLowerCase()}`;
+          card.innerHTML = `
+      <span>${item.id}</span>
+      <span class="status">${status}</span>
+    `;
+
+          labCards.appendChild(card);
+        });
+      }
+
+      searchInput.addEventListener("input", () => {
+        const value = searchInput.value.toLowerCase();
+        renderCards(value);
+      });
+
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          window.location.href = "index.html"; // adjust path if needed
+        } catch (error) {
+          console.error("Logout failed:", error);
+          alert("Error logging out. Please try again.");
+        }
+      });
+
+      // auto refresh every minute
+      setInterval(loadFromFirestore, 60000);
+    </script>
+  </body>
+</html>

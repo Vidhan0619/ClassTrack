@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notice Board | ClassTrack</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="common.css">
+
+    <style>
+        /* FORCE ONE-LINE NOTICE */
+        .notice-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 24px;
+            background: var(--bg-card);
+            border-radius: 14px;
+            margin-bottom: 14px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+        }
+
+        .notice-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .notice-left strong {
+            color: var(--deep-teal);
+            font-weight: 600;
+        }
+
+        .notice-left span {
+            color: var(--text-muted);
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .notice-right {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+
+  <!-- LEFT -->
+  <div class="nav-left">
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="logo-section">
+      <span class="logo">ClassTrack</span>
+      <p class="motto">Check availability before you walk in</p>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav-menu" id="navMenu">
+    <a href="dashboard.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="class.html" class="active"><i class="fa-solid fa-book"></i> Class</a>
+    <a href="lab.html"><i class="fa-solid fa-flask"></i> Lab</a>
+    <a href="notice.html"><i class="fa-solid fa-bullhorn"></i> Notice</a>
+    <a href="community.html"><i class="fa-solid fa-users"></i> Community</a>
+  </nav>
+
+  <!-- RIGHT -->
+  <div class="nav-actions">
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+
+</header>
+
+<main class="page-container">
+
+    <div class="page-header">
+        <h1><i class="fa-solid fa-bullhorn"></i> Notice Board</h1>
+        <p>Official announcements from college clubs</p>
+    </div>
+
+    <!-- NOTICE LIST (ONE LINE EACH) -->
+
+    <div class="notice-row">
+        <div class="notice-left">
+            <strong>🚀 GDG Club</strong>
+            <span>Hackathon Workshop on Jan 5 at 5 PM</span>
+        </div>
+        <div class="notice-right available">Upcoming</div>
+    </div>
+
+    <div class="notice-row">
+        <div class="notice-left">
+            <strong>🎭 Cultural Committee</strong>
+            <span>Annual Fest Auditions – Register by Jan 12</span>
+        </div>
+        <div class="notice-right occupied">Registration Open</div>
+    </div>
+
+    <div class="notice-row">
+        <div class="notice-left">
+            <strong>⚽ Sports Club</strong>
+            <span>Inter-College Football Team Tryouts</span>
+        </div>
+        <div class="notice-right available">New</div>
+    </div>
+
+</main>
+<script>
+  const menuToggle = document.getElementById("menuToggle");
+  const navMenu = document.getElementById("navMenu");
+
+  if (menuToggle) {
+    menuToggle.addEventListener("click", () => {
+      navMenu.classList.toggle("active");
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classrooms | ClassTrack</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+
+<header class="navbar">
+
+  <div class="nav-left">
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="logo-section">
+      <span class="logo">ClassTrack</span>
+      <p class="motto">Check availability before you walk in</p>
+    </div>
+  </div>
+
+  <nav class="nav-menu" id="navMenu">
+    <a href="dashboard.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="class.html"><i class="fa-solid fa-book"></i> Class</a>
+    <a href="lab.html" class="active"><i class="fa-solid fa-flask"></i> Lab</a>
+    <a href="notice.html"><i class="fa-solid fa-bullhorn"></i> Notice</a>
+    <a href="community.html"><i class="fa-solid fa-users"></i> Community</a>
+  </nav>
+
+  <div class="nav-actions">
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </div>
+
+</header>
+<!-- ===== MAIN ===== -->
+<main class="page-container">
+
+    <div class="page-header">
+        <h1><i class="fa-solid fa-book"></i> Classrooms</h1>
+        <p>Browse all classrooms and check their availability</p>
+    </div>
+
+    <!-- Search -->
+    <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search classroom..." id="searchInput">
+    </div>
+
+    <!-- Cards -->
+    <div class="cards" id="classroomCards">
+        <!-- Firestore cards will load here -->
+    </div>
+
+</main>
+
+<script type="module">
+/* ================= FIREBASE ================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs } 
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } 
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+/* Firebase Config */
+const firebaseConfig = {
+    apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
+    authDomain: "classtrack-87c00.firebaseapp.com",
+    projectId: "classtrack-87c00",
+    storageBucket: "classtrack-87c00.appspot.com",
+    messagingSenderId: "594642417368",
+    appId: "1:594642417368:web:b1cafb991988c1b53109ad"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+/* ================= ELEMENTS ================= */
+const cardsContainer = document.getElementById("classroomCards");
+const searchInput = document.getElementById("searchInput");
+const logoutBtn = document.getElementById("logoutBtn");
+
+let allRooms = [];
+
+/* ================= AUTH GUARD ================= */
+let authChecked = false;
+onAuthStateChanged(auth, user => {
+  if (!authChecked) {
+    authChecked = true;
+    if (!user) {
+      window.location.replace("index.html");
+    } else {
+      loadClassrooms();
+    }
+  }
+});
+
+/* ================= TIME LOGIC ================= */
+function timeToMinutes(time) {
+  if (!time || typeof time !== "string") return null;
+  const [h, m] = time.split(":").map(Number);
+  if (isNaN(h) || isNaN(m)) return null;
+  return h * 60 + m;
+}
+
+function getRoomStatus(schedule) {
+  if (!Array.isArray(schedule)) return "Available";
+
+  const today = new Date().toLocaleString("en-US", { weekday: "short" });
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  for (let slot of schedule) {
+    if (!slot || !slot.day || !slot.start || !slot.end) continue;
+    if (slot.day !== today) continue;
+
+    const start = timeToMinutes(slot.start);
+    const end = timeToMinutes(slot.end);
+    if (start === null || end === null) continue;
+
+    if (currentMinutes >= start && currentMinutes <= end) {
+      return "Occupied";
+    }
+  }
+  return "Available";
+}
+
+/* ================= FIRESTORE LOAD ================= */
+async function loadClassrooms() {
+  allRooms = [];
+  cardsContainer.innerHTML = "";
+
+  const snapshot = await getDocs(collection(db, "Classroom"));
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.type === "Classroom") {
+      allRooms.push({ id: doc.id, ...data });
+    }
+  });
+
+  renderCards();
+}
+  const menuToggle = document.getElementById("menuToggle");
+  const navMenu = document.getElementById("navMenu");
+
+  if (menuToggle) {
+    menuToggle.addEventListener("click", () => {
+      navMenu.classList.toggle("active");
+    });
+  }
+
+
+/* ================= RENDER ================= */
+function renderCards(searchText = "") {
+  cardsContainer.innerHTML = "";
+
+  allRooms
+    .filter(room => room.id.toLowerCase().includes(searchText))
+    .forEach(room => {
+      const status = getRoomStatus(room.schedule);
+
+      const card = document.createElement("div");
+      card.className = `card ${status.toLowerCase()}`;
+      card.innerHTML = `
+        <span>${room.id}</span>
+        <span class="status">${status}</span>
+      `;
+      cardsContainer.appendChild(card);
+    });
+}
+
+/* ================= SEARCH ================= */
+searchInput.addEventListener("input", () => {
+  renderCards(searchInput.value.toLowerCase());
+});
+
+/* ================= LOGOUT ================= */
+logoutBtn.addEventListener("click", async () => {
+  await signOut(auth);
+});
+</script>
+
+</body>
+</html>
