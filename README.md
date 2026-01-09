@@ -1,63 +1,213 @@
-# 📘 ClassTrack – Smart Classroom Availability System
+📚 ClassTrack – Smart Classroom & Lab Availability System
 
-ClassTrack is a web-based smart campus solution that helps students and faculty
-check real-time availability of classrooms and laboratories.
-It improves campus resource utilization and reduces time wastage by providing
-clear availability status in a clean, responsive interface.
+ClassTrack is a web-based smart campus solution that helps students and faculty check real-time availability of classrooms and laboratories, manage schedules, view notices, and interact through a campus community — all powered by Firebase Authentication and Firestore.
+
 
 ---
 
-## 🚀 Features
+🚀 Features
 
-### 👩‍🎓 Students
-- View real-time classroom availability
-- View real-time laboratory availability
-- Read notices posted by college clubs
-- Interact in the community section
-- View installed software in laboratory computers
-- Read-only access to all data
+👨‍🎓 Student Features (Read-Only)
 
-### 👨‍🏫 Faculty (Admins)
-- Login using official college Google ID
-- Read and write access to Firestore
-- Manage classroom and lab schedules
-- Post notices and updates
-- Update lab software information
+View real-time classroom & lab availability
 
-### 🌐 General
-- Google authentication using Firebase
-- Real-time database updates with Firestore
-- Responsive UI (mobile & desktop)
-- Clean navigation and modern design
+Search rooms instantly
 
----
+View weekly utilization (analytics)
 
-## 🛠️ Tech Stack
+Access Notice Board (club events & announcements)
 
-| Technology | Purpose |
-|----------|--------|
-| HTML | Structure |
-| CSS | Styling & Responsive Design |
-| JavaScript | Functionality |
-| Firebase Authentication | Secure login |
-| Firebase Firestore | Real-time database |
-| Font Awesome | Icons |
-| Google Fonts (Inter) | Typography |
+Participate in Community section (student–senior interaction)
+
+Mobile-responsive UI
+
+
+👩‍🏫 Faculty Features (Admin)
+
+Secure Admin Panel
+
+Read & Write access to Firestore
+
+Manage classroom & lab schedules
+
+Book extra classes/labs
+
+Automatic expiry of extra bookings
+
+View usage analytics (charts)
+
+View room-wise timetable
+
+
 
 ---
 
-## 🔐 User Roles & Access
+🏗️ Tech Stack
 
-- **Faculty**
-  - Admin role
-  - Read & write access to Firestore
+Technology	Usage
 
-- **Students**
-  - Read-only access
-  - Cannot modify any data
+HTML5	Structure
+CSS3	Responsive UI & Theme
+JavaScript (ES6)	Logic
+Firebase Authentication	Google Login (College Email Only)
+Firebase Firestore	Real-time Database
+Chart.js	Analytics & Utilization Graphs
 
-Authentication is restricted to **college email domain**.
+
 
 ---
 
-## 📂 Project Structure
+🔐 Authentication Rules
+
+Only college email IDs can log in
+
+Students → Read-only access
+
+Faculty (Admins) → Read & Write access
+
+
+
+---
+
+📂 Project Structure
+
+ClassTrack/
+│
+├── login.html
+├── dashboard.html
+├── class.html
+├── lab.html
+├── admin.html
+├── notice.html
+├── community.html
+│
+├── common.css
+├── dashboard.css
+├── admin.css
+├── style.css
+│
+├── firebase-config.js (optional)
+└── README.md
+
+
+---
+
+🔥 Firebase Setup
+
+1. Create a Firebase project
+
+
+2. Enable:
+
+Authentication → Google Provider
+
+Cloud Firestore
+
+
+
+3. Add your Firebase config to all JS files
+
+
+4. Firestore structure example:
+
+
+
+Classroom (collection)
+ ├── A221 (document)
+ │    ├── type: "Classroom"
+ │    ├── schedule: [ { day, start, end } ]
+ │
+ ├── LAB1 (document)
+ │    ├── type: "Lab"
+ │    ├── software: ["Python", "MATLAB"]
+
+
+---
+
+📊 Workflow Overview
+
+1. User opens website
+
+
+2. Firebase Authentication checks role
+
+
+3. Student
+
+Reads data from Firestore
+
+
+
+4. Faculty
+
+Reads & writes schedules
+
+
+
+5. Firestore updates reflect in real-time UI
+
+
+
+
+---
+
+📱 Responsive Design
+
+Optimized for mobile, tablet, and desktop
+
+Single-column cards on phones
+
+Collapsible hamburger menu
+
+Clean & accessible UI
+
+
+
+---
+
+👥 Team Collaboration (Group Project)
+
+GitHub repository shared with teammates
+
+Faculty & student roles clearly defined
+
+Contributions managed using GitHub collaborators
+
+
+
+---
+
+🛠️ Future Enhancements
+
+Push notifications
+
+Role-based admin approval
+
+Room booking conflict prevention
+
+Attendance integration
+
+AI-based usage optimization
+
+
+
+---
+
+📜 License
+
+This project is created for educational purposes.
+You are free to modify and enhance it.
+
+
+---
+
+🙌 Acknowledgements
+
+Firebase Team
+
+Chart.js
+
+Font Awesome
+
+OpenAI (for development assistance)
+
