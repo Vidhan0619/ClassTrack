@@ -1,78 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin Login | ClassTrack</title>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Login | ClassTrack</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="common.css">
+
+  <style>
+    .login-card {
+      max-width: 420px;
+      margin: auto;
+      background: #fff;
+      padding: 32px;
+      border-radius: 18px;
+      box-shadow: 0 12px 26px rgba(0,0,0,0.12);
+    }
+
+    .role-select {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .role-select button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 999px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .role-select button.active {
+      background: rgba(24,143,139,0.15);
+      color: var(--deep-teal);
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 999px;
+      border: 1px solid #cbd5e1;
+      margin-bottom: 14px;
+    }
+
+    .login-card button.login {
+      width: 100%;
+      padding: 14px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--gold), var(--soft-gold));
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      font-size: 13px;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
 
-<body class="admin-page">
+<body>
 
-<main class="admin-wrapper">
-
-  <!-- Brand -->
-  <div class="admin-brand">
-    <h1 class="logo">ClassTrack</h1>
-    <p class="motto">Admin Panel</p>
+<header class="navbar">
+  <div>
+    <div class="logo">ClassTrack</div>
+    <div class="motto">Login Portal</div>
   </div>
+</header>
 
-  <!-- Header -->
+<main class="page-container">
   <div class="page-header">
-    <h1>Admin Login</h1>
-    <p>Authorized access only</p>
+    <h1>Login</h1>
+    <p>Select role to continue</p>
   </div>
 
-<!-- Login Card -->
-    <div class="admin-login-card">
+  <div class="login-card">
 
-        <input type="text" id="adminId" placeholder="Admin ID">
-        <input type="password" id="adminPassword" placeholder="Password">
-
-        <button id="loginBtn">Login</button>
-
-        <p id="errorMsg" class="error-msg"></p>
-
+    <div class="role-select">
+      <button id="facultyBtn" class="active">Faculty</button>
+      <button id="studentBtn">Student</button>
     </div>
+
+    <input type="text" id="userId" placeholder="User ID">
+    <input type="password" id="password" placeholder="Password">
+
+    <button class="login" id="loginBtn">Login</button>
+
+    <div class="error" id="errorMsg"></div>
+  </div>
 </main>
 
-
-
 <script>
-/* ===============================
-   ADMIN CREDENTIALS (MANUAL)
-================================ */
-const adminIds = ["admin01", "admin02", "superadmin"];
-const adminPasswords = ["admin@123", "class@track", "root123"];
+  let role = "faculty";
 
-/* ===============================
-   LOGIN LOGIC
-================================ */
-document.getElementById("loginBtn").addEventListener("click", () => {
-    const id = document.getElementById("adminId").value.trim();
-    const password = document.getElementById("adminPassword").value.trim();
-    const errorMsg = document.getElementById("errorMsg");
+  const facultyCreds = {
+    admin01: "admin@123",
+    admin02: "class@track"
+  };
 
-    const index = adminIds.indexOf(id);
+  const studentCreds = {
+    student01: "student@123",
+    student02: "event@book"
+  };
 
-    if (index === -1) {
-        errorMsg.innerText = "Invalid Admin ID";
-        return;
-    }
+  facultyBtn.onclick = () => {
+    role = "faculty";
+    facultyBtn.classList.add("active");
+    studentBtn.classList.remove("active");
+  };
 
-    if (adminPasswords[index] !== password) {
-        errorMsg.innerText = "Incorrect Password";
-        return;
-    }
+  studentBtn.onclick = () => {
+    role = "student";
+    studentBtn.classList.add("active");
+    facultyBtn.classList.remove("active");
+  };
 
-    // ✅ Success
+  loginBtn.onclick = () => {
+    const id = userId.value.trim();
+    const pass = password.value.trim();
     errorMsg.innerText = "";
-    sessionStorage.setItem("adminLoggedIn", "true");
-    window.location.href = "admindash.html";
-});
+
+    if (role === "faculty") {
+      if (facultyCreds[id] === pass) {
+        sessionStorage.setItem("role", "faculty");
+        location.href = "admindash.html";
+      } else {
+        errorMsg.innerText = "Invalid faculty credentials";
+      }
+    }
+
+    if (role === "student") {
+      if (studentCreds[id] === pass) {
+        sessionStorage.setItem("role", "student");
+        location.href = "studentdash.html";
+      } else {
+        errorMsg.innerText = "Invalid student credentials";
+      }
+    }
+  };
 </script>
 
 </body>

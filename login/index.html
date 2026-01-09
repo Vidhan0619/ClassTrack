@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ClassTrack | Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<header class="navbar">
+    <div class="logo-area">
+        <h1>ClassTrack</h1>
+        <span>Smart Classroom Availability System</span>
+    </div>
+</header>
+
+<!-- ===== MAIN LOGIN ===== -->
+<main class="login-container">
+
+    <!-- LEFT CONTENT -->
+    <section class="info">
+        <div class="glow-dot"></div>
+
+        <h2>Welcome to ClassTrack</h2>
+        <p>
+            ClassTrack is a smart web-based system designed to help students and
+            faculty check real-time classroom and laboratory availability.
+            Reduce time wastage and improve campus resource utilization.
+        </p>
+
+        <ul>
+            <li>✔ Real-time classroom & lab availability</li>
+            <li>✔ Efficient campus resource usage</li>
+            <li>✔ Easy access to free rooms</li>
+        </ul>
+    </section>
+
+    <!-- RIGHT LOGIN CARD -->
+    <section class="login-card">
+        <h3>College Login</h3>
+        <p class="subtext">Use your official college Google ID</p>
+
+            <button class="google-btn" id="google"onclick="googleLogin()">
+                Sign in with College Google ID
+            </button>
+
+        <div class="secure">
+            Secure & Authorized Access Only
+        </div>
+    </section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    © 2026 ClassTrack • Smart Campus Solution
+</footer>
+
+
+    <!-- ✅ FIREBASE (MODERN v10) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import {
+            getAuth,
+            GoogleAuthProvider,
+            signInWithPopup,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // 🔁 Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
+            authDomain: "classtrack-87c00.firebaseapp.com",
+            projectId: "classtrack-87c00",
+            storageBucket: "classtrack-87c00.appspot.com",
+            messagingSenderId: "594642417368",
+            appId: "1:594642417368:web:b1cafb991988c1b53109ad"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // 🔒 College domain
+        const COLLEGE_DOMAIN = "@bvmengineering.ac.in";
+
+        // ======================
+        // Google Login ONLY
+        // ======================
+        window.googleLogin = function () {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    const email = result.user.email;
+
+                    // ❌ Block non-college emails
+                    if (!email.endsWith(COLLEGE_DOMAIN)) {
+                        alert("Access denied! Please use your college email ID.");
+                        signOut(auth);
+                        return;
+                    }
+
+                    // ✅ Auto-created user
+                    alert("Welcome to ClassTrack!");
+                    window.location.href = "../dashboard.html";
+                })
+                .catch((error) => {
+                    alert(error.message);
+                });
+        };
+    </script>
+
+</body>
+</html>

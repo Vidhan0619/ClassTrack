@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Event | ClassTrack</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Common Theme -->
+  <link rel="stylesheet" href="common.css">
+
+  <style>
+    .admin-container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 60px;
+    }
+
+    .admin-section {
+      margin-top: 60px;
+    }
+
+    .admin-section h2 {
+      font-size: 26px;
+      margin-bottom: 22px;
+      color: var(--deep-teal);
+    }
+
+    .admin-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .admin-form input,
+    .admin-form select,
+    .admin-form textarea {
+      padding: 14px 16px;
+      border-radius: 999px;
+      border: 1px solid #cbd5e1;
+      font-family: Inter;
+    }
+
+    textarea {
+      border-radius: 18px;
+      grid-column: span 2;
+      resize: none;
+    }
+
+    .admin-form button {
+      grid-column: span 2;
+      padding: 14px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--gold), var(--soft-gold));
+      color: var(--deep-teal);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* BOOKED EVENTS TABLE */
+    .event-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.1);
+    }
+
+    .event-table th,
+    .event-table td {
+      padding: 14px;
+      font-size: 14px;
+      text-align: center;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .event-table th {
+      background: #f1f5f9;
+      color: var(--deep-teal);
+      font-weight: 600;
+    }
+
+    .delete-btn {
+      background: transparent;
+      border: none;
+      color: #b91c1c;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .admin-container {
+        padding: 30px 16px;
+      }
+
+      .admin-form {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-form button {
+        grid-column: span 1;
+      }
+
+      textarea {
+        grid-column: span 1;
+      }
+
+      .event-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div>
+    <div class="logo">ClassTrack</div>
+    <div class="motto">Student Event Booking</div>
+  </div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</header>
+
+<main class="admin-container">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1>Book an Event</h1>
+    <p>Submit and manage your events</p>
+  </div>
+
+  <!-- BOOK EVENT -->
+  <div class="admin-section">
+    <h2>New Event</h2>
+
+    <div class="admin-form">
+      <input id="title" placeholder="Event Title">
+      <input id="club" placeholder="Club Name">
+
+      <select id="venueType">
+        <option value="Class">Class</option>
+        <option value="Lab">Lab</option>
+      </select>
+
+      <input id="venue" placeholder="Class / Lab Name">
+      <input type="date" id="date">
+      <input type="time" id="start">
+      <input type="time" id="end">
+
+      <textarea id="desc" rows="3" placeholder="Event Description"></textarea>
+
+      <button onclick="submitEvent()">Submit Event</button>
+    </div>
+  </div>
+
+  <!-- BOOKED EVENTS -->
+  <div class="admin-section">
+    <h2>Your Booked Events</h2>
+
+    <table class="event-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Venue</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="eventBody"></tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- ================= FIRESTORE SCRIPT ================= -->
+<script type="module">
+  if (sessionStorage.getItem("role") !== "student") {
+    location.href = "admin.html";
+  }
+
+  import { initializeApp } from
+    "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc,
+    serverTimestamp
+  } from
+    "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  /* FIREBASE */
+  const firebaseConfig = {
+    apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
+    authDomain: "classtrack-87c00.firebaseapp.com",
+    projectId: "classtrack-87c00"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  /* ELEMENTS */
+  const titleEl = document.getElementById("title");
+  const clubEl = document.getElementById("club");
+  const venueTypeEl = document.getElementById("venueType");
+  const venueEl = document.getElementById("venue");
+  const dateEl = document.getElementById("date");
+  const startEl = document.getElementById("start");
+  const endEl = document.getElementById("end");
+  const descEl = document.getElementById("desc");
+  const submitBtn = document.querySelector(".admin-form button");
+  const eventBody = document.getElementById("eventBody");
+
+  /* LOAD EVENTS */
+  async function loadEvents() {
+    eventBody.innerHTML = "";
+    const snap = await getDocs(collection(db, "events"));
+
+    snap.forEach(d => {
+      const e = d.data();
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${e.title}</td>
+        <td>${e.venueType} ${e.venue}</td>
+        <td>${e.date}</td>
+        <td>${e.start} - ${e.end}</td>
+        <td>
+          <button class="delete-btn" data-id="${d.id}">
+            Delete
+          </button>
+        </td>
+      `;
+
+      eventBody.appendChild(row);
+    });
+
+    // attach delete handlers
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.onclick = async () => {
+        if (!confirm("Delete this event?")) return;
+        await deleteDoc(doc(db, "events", btn.dataset.id));
+        loadEvents();
+      };
+    });
+  }
+
+  /* SUBMIT EVENT */
+  submitBtn.addEventListener("click", async () => {
+
+    // basic validation
+    if (
+      !titleEl.value ||
+      !clubEl.value ||
+      !venueEl.value ||
+      !dateEl.value ||
+      !startEl.value ||
+      !endEl.value
+    ) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "events"), {
+        title: titleEl.value.trim(),
+        club: clubEl.value.trim(),
+        venueType: venueTypeEl.value,
+        venue: venueEl.value.trim(),
+        date: dateEl.value,
+        start: startEl.value,
+        end: endEl.value,
+        description: descEl.value.trim(),
+        createdAt: serverTimestamp()
+      });
+
+      alert("Event booked successfully!");
+
+      // reset form
+      [titleEl, clubEl, venueEl, dateEl, startEl, endEl, descEl]
+        .forEach(i => i.value = "");
+
+      loadEvents();
+
+    } catch (err) {
+      console.error(err);
+      alert("Error submitting event");
+    }
+  });
+
+  loadEvents();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Campus Events</title>
+
+  <!-- COMMON THEME -->
+  <link rel="stylesheet" href="common.css" />
+  <link rel="stylesheet" href="events.css" />
+
+  <!-- ICONS -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    .nav-menu a i {
+      margin-right: 6px;
+      font-size: 14px;
+      color: var(--dark-teal);
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div>
+    <div class="logo">GN Campus</div>
+    <div class="motto">Smart Campus System</div>
+  </div>
+
+  <div class="nav-menu">
+    <a href="dashboard.html"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="class.html"><i class="fa-solid fa-book"></i> Class</a>
+    <a href="lab.html"><i class="fa-solid fa-flask"></i> Lab</a>
+    <a href="admin.html"><i class="fa-solid fa-chart-simple"></i> Analysis</a>
+    <a href="notice.html"><i class="fa-solid fa-bullhorn"></i> Notice</a>
+    <a href="community.html"><i class="fa-solid fa-users"></i> Community</a>
+    <a href="events.html" class="active">
+      <i class="fa-solid fa-calendar-days"></i> Events
+    </a>
+  </div>
+
+  <button class="logout-btn">Logout</button>
+</nav>
+
+<!-- CONTENT -->
+<div class="page-container">
+
+  <div class="page-header">
+    <h1>Campus Events</h1>
+    <p>Upcoming & ongoing club activities</p>
+  </div>
+
+  <section class="section">
+    <h2>Upcoming Events</h2>
+    <div class="cards" id="upcomingEvents"></div>
+  </section>
+
+  <section class="section">
+    <h2>Ongoing Events</h2>
+    <div class="cards" id="ongoingEvents"></div>
+  </section>
+
+</div>
+
+<!-- ================= FIRESTORE LOGIC ================= -->
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore, collection, getDocs
+} from
+  "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+/* Firebase Config */
+const firebaseConfig = {
+  apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
+  authDomain: "classtrack-87c00.firebaseapp.com",
+  projectId: "classtrack-87c00"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const upcomingDiv = document.getElementById("upcomingEvents");
+const ongoingDiv = document.getElementById("ongoingEvents");
+
+/* Helpers */
+const now = new Date();
+const today = now.toISOString().split("T")[0];
+const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+const toMinutes = t => {
+  const [h,m] = t.split(":").map(Number);
+  return h * 60 + m;
+};
+
+/* Load Events */
+async function loadEvents() {
+  const snap = await getDocs(collection(db, "events"));
+
+  upcomingDiv.innerHTML = "";
+  ongoingDiv.innerHTML = "";
+
+  snap.forEach(doc => {
+    const e = doc.data();
+
+    if (!e.date || !e.start || !e.end) return;
+
+    const eventStart = toMinutes(e.start);
+    const eventEnd = toMinutes(e.end);
+
+    let status = "";
+
+    if (e.date > today) status = "upcoming";
+    else if (e.date === today &&
+             currentMinutes >= eventStart &&
+             currentMinutes <= eventEnd)
+      status = "ongoing";
+    else return; // ❌ skip past events
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <div class="event-info">
+        <h3>${e.title}</h3>
+        <p>${e.club}</p>
+        <p>${e.venueType}: ${e.venue}</p>
+        <p>${e.date} • ${e.start} - ${e.end}</p>
+      </div>
+      <span class="status ${status === "upcoming" ? "available" : "occupied"}">
+        ${status === "upcoming" ? "Upcoming" : "Ongoing"}
+      </span>
+    `;
+
+    status === "upcoming"
+      ? upcomingDiv.appendChild(card)
+      : ongoingDiv.appendChild(card);
+  });
+}
+
+loadEvents();
+</script>
+
+</body>
+</html>
