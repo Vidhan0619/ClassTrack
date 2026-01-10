@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | ClassTrack</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="common.css">
 
   <style>
+    /* ================= LOGIN CARD ================= */
     .login-card {
       max-width: 420px;
       margin: auto;
@@ -17,6 +19,7 @@
       box-shadow: 0 12px 26px rgba(0,0,0,0.12);
     }
 
+    /* ================= ROLE SELECT ================= */
     .role-select {
       display: flex;
       gap: 12px;
@@ -38,14 +41,17 @@
       color: var(--deep-teal);
     }
 
+    /* ================= INPUTS ================= */
     .login-card input {
       width: 100%;
       padding: 14px;
       border-radius: 999px;
       border: 1px solid #cbd5e1;
       margin-bottom: 14px;
+      font-size: 14px;
     }
 
+    /* ================= LOGIN BUTTON ================= */
     .login-card button.login {
       width: 100%;
       padding: 14px;
@@ -54,6 +60,7 @@
       background: linear-gradient(135deg, var(--gold), var(--soft-gold));
       font-weight: 600;
       cursor: pointer;
+      font-size: 15px;
     }
 
     .error {
@@ -61,6 +68,43 @@
       font-size: 13px;
       margin-top: 10px;
       text-align: center;
+    }
+
+    /* ================= MOBILE RESPONSIVE ================= */
+    @media (max-width: 600px) {
+
+      .page-header h1 {
+        font-size: 24px;
+      }
+
+      .page-header p {
+        font-size: 14px;
+      }
+
+      .login-card {
+        padding: 22px;
+        border-radius: 16px;
+      }
+
+      .role-select {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .role-select button {
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      .login-card input {
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      .login-card button.login {
+        padding: 12px;
+        font-size: 14px;
+      }
     }
   </style>
 </head>

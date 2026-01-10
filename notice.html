@@ -23,6 +23,7 @@
       border-radius: 14px;
       margin-bottom: 14px;
       box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+      cursor: pointer;
     }
 
     .notice-left {
@@ -51,13 +52,175 @@
       white-space: nowrap;
     }
 
-    /* Empty state */
     .empty {
       text-align: center;
       color: var(--text-muted);
       margin-top: 40px;
       font-size: 14px;
     }
+
+    /* ================= MODAL ================= */
+    .notice-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .notice-card {
+      background: #fff;
+      max-width: 520px;
+      width: 92%;
+      border-radius: 18px;
+      padding: 22px;
+      position: relative;
+    }
+
+    .notice-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 14px;
+      margin-bottom: 14px;
+    }
+
+    .notice-card h3 {
+      color: var(--deep-teal);
+      margin-bottom: 6px;
+    }
+
+    .notice-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .notice-card a {
+      font-weight: 600;
+      color: var(--dark-teal);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    /* ================= NOTICE CARD BLOCK DESIGN ================= */
+
+.notice-card {
+  background: #fff;
+  max-width: 560px;
+  width: 94%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+  position: relative;
+}
+
+/* IMAGE */
+/* IMAGE CONTAINER */
+.notice-image {
+  background: #f8fafc;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* IMAGE ITSELF */
+.notice-image img {
+  width: 100%;
+  height: 260px;
+  object-fit: contain;          /* ✅ full image visible */
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;    /* subtle border */
+}
+
+/* HEADER */
+.notice-header {
+  padding: 18px 20px 8px;
+}
+
+.notice-header h3 {
+  color: var(--deep-teal);
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.club-badge {
+  display: inline-block;
+  background: rgba(24,143,139,0.15);
+  color: var(--deep-teal);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+/* BODY */
+.notice-body {
+  padding: 12px 20px 18px;
+}
+
+.notice-body p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* FOOTER */
+.notice-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notice-link {
+  background: linear-gradient(135deg, var(--gold), var(--soft-gold));
+  color: var(--deep-teal);
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.no-link {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* CLOSE */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #ffffff;
+  background: rgba(0,0,0,0.4);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .notice-image img {
+    height: 200px;
+  }
+}
+
   </style>
 </head>
 
@@ -100,7 +263,6 @@
     <p>Official announcements from student clubs & committees</p>
   </div>
 
-  <!-- NOTICES FROM FIRESTORE -->
   <div id="noticeList"></div>
 
   <div class="empty" id="emptyState" style="display:none;">
@@ -108,6 +270,37 @@
   </div>
 
 </main>
+
+ <div class="notice-modal" id="noticeModal">
+  <div class="notice-card">
+
+    <span class="close-btn" id="closeModal">&times;</span>
+
+    
+    <div class="notice-image">
+      <img id="modalImg">
+    </div>
+
+    <!-- HEADER BLOCK -->
+    <div class="notice-header">
+      <h3 id="modalTitle"></h3>
+      <span class="club-badge" id="modalClub"></span>
+    </div>
+
+    <!-- DESCRIPTION BLOCK -->
+    <div class="notice-body">
+      <p id="modalDesc"></p>
+    </div>
+
+    <!-- ACTION BLOCK -->
+    <div class="notice-footer">
+      <a id="modalLink" target="_blank" class="notice-link"></a>
+      <span id="noLink" class="no-link">No registration link provided</span>
+    </div>
+
+  </div>
+</div>
+
 
 <!-- ================= SCRIPTS ================= -->
 <script type="module">
@@ -122,7 +315,6 @@
   } from
     "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  /* FIREBASE CONFIG */
   const firebaseConfig = {
     apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
     authDomain: "classtrack-87c00.firebaseapp.com",
@@ -135,8 +327,16 @@
   const noticeList = document.getElementById("noticeList");
   const emptyState = document.getElementById("emptyState");
 
+  const noticeModal = document.getElementById("noticeModal");
+  const modalImg = document.getElementById("modalImg");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalDesc = document.getElementById("modalDesc");
+  const modalLink = document.getElementById("modalLink");
+  const closeModal = document.getElementById("closeModal");
+
   async function loadNotices() {
     noticeList.innerHTML = "";
+    emptyState.style.display = "none";
 
     const q = query(
       collection(db, "student_ads"),
@@ -151,22 +351,44 @@
     }
 
     snap.forEach(doc => {
-      const ad = doc.data();
+      const n = doc.data();
 
       const row = document.createElement("div");
       row.className = "notice-row";
 
       row.innerHTML = `
         <div class="notice-left">
-          <strong>📢 ${ad.club}</strong>
-          <span>${ad.title} — ${ad.description}</span>
+          <strong>📢 ${n.club}</strong>
+          <span>${n.title} — ${n.shortDesc || ""}</span>
         </div>
         <div class="notice-right available">New</div>
       `;
 
+      row.onclick = () => openNotice(n);
       noticeList.appendChild(row);
     });
   }
+
+  function openNotice(n) {
+    modalTitle.innerText = n.title;
+    modalDesc.innerText = n.longDesc || n.shortDesc || "";
+
+    modalImg.src = n.imageUrl
+      ? n.imageUrl
+      : "https://via.placeholder.com/400x250?text=Notice";
+
+    if (n.link) {
+      modalLink.href = n.link;
+      modalLink.innerText = "Register / View More";
+      modalLink.style.display = "inline";
+    } else {
+      modalLink.style.display = "none";
+    }
+
+    noticeModal.style.display = "flex";
+  }
+
+  closeModal.onclick = () => noticeModal.style.display = "none";
 
   loadNotices();
 
