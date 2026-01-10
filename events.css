@@ -1,27 +1,31 @@
 /* ===============================
-   NAVBAR LAYOUT FIX
+   NAVBAR – STABLE & FINAL
 ================================ */
+.navbar {
+  display: flex;
+  flex-direction: column;
+}
 
 /* TOP ROW */
 .nav-top {
-  width: 100%;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
-/* LEFT GROUP */
+/* LEFT */
 .nav-left {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-/* RIGHT GROUP */
+/* RIGHT */
 .nav-actions {
   margin-left: auto;
 }
 
-/* HAMBURGER */
+/* MENU BUTTON */
 .menu-toggle {
   display: none;
   background: none;
@@ -31,64 +35,41 @@
   cursor: pointer;
 }
 
+/* NAV LINKS (DESKTOP) */
+.nav-menu {
+  display: flex;
+  gap: 28px;
+  margin-left: 40px;
+}
+
 /* ===============================
-   EVENTS SECTIONS
+   EVENTS
 ================================ */
 .section {
   margin-bottom: 50px;
 }
 
-.section h2 {
-  font-size: 22px;
-  color: var(--deep-teal);
-  margin-bottom: 22px;
-}
-
-/* ===============================
-   GRID
-================================ */
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
 }
 
-/* ===============================
-   EVENT CARD
-================================ */
 .card {
   background: var(--bg-card);
   padding: 26px;
   border-radius: 20px;
   box-shadow: 0 12px 26px rgba(0,0,0,0.1);
-
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
   gap: 18px;
 }
 
-.card h3 {
-  font-size: 18px;
-  color: var(--deep-teal);
-  margin-bottom: 6px;
-}
-
-.card p {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-
-/* ===============================
-   STATUS
-================================ */
 .status {
   padding: 8px 18px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
-  white-space: nowrap;
 }
 
 .available {
@@ -102,43 +83,18 @@
 }
 
 /* ===============================
-   INTERACTION
-================================ */
-.card:hover {
-  transform: translateY(-3px);
-  transition: 0.2s ease;
-}
-
-.card:active {
-  transform: scale(0.97);
-}
-
-/* ===============================
-   MOBILE RESPONSIVE
+   MOBILE
 ================================ */
 @media (max-width: 768px) {
 
-  /* SHOW HAMBURGER */
   .menu-toggle {
     display: block;
   }
 
-  /* NAVBAR STACK */
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 16px;
-  }
-
-  .nav-top {
-    width: 100%;
-  }
-
-  /* DROPDOWN MENU */
   .nav-menu {
     display: none;
-    width: 100%;
     flex-direction: column;
+    width: 100%;
     background: #fff;
     margin-top: 14px;
     padding: 14px;
@@ -150,19 +106,11 @@
     display: flex;
   }
 
-  /* EVENTS */
   .cards {
     grid-template-columns: 1fr;
-    gap: 18px;
   }
 
   .card {
     flex-direction: column;
-    padding: 22px;
-  }
-
-  .status {
-    margin-top: 10px;
-    align-self: flex-start;
   }
 }
