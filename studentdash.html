@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book Event | ClassTrack</title>
+  <title>Student Dashboard | ClassTrack</title>
 
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@
       color: var(--deep-teal);
     }
 
-    /* ================= FORM ================= */
+    /* ================= FORMS ================= */
     .admin-form {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -49,8 +49,8 @@
 
     textarea {
       border-radius: 18px;
-      grid-column: span 2;
       resize: none;
+      grid-column: span 2;
     }
 
     .admin-form button {
@@ -64,7 +64,7 @@
       cursor: pointer;
     }
 
-    /* ================= DESKTOP TABLE ================= */
+    /* ================= EVENTS TABLE ================= */
     .event-table {
       width: 100%;
       border-collapse: collapse;
@@ -88,110 +88,48 @@
       font-weight: 600;
     }
 
-    /* ================= MOBILE CARDS ================= */
-    .event-cards {
-      display: none;
-      flex-direction: column;
+    /* ================= ADS ================= */
+    .ads {
+      display: grid;
       gap: 16px;
     }
 
-    .event-card {
+    .ad-card {
       background: #fff;
       padding: 18px;
       border-radius: 16px;
       box-shadow: 0 10px 22px rgba(0,0,0,0.1);
     }
 
-    .event-card h4 {
-      font-size: 16px;
+    .ad-card h4 {
       color: var(--deep-teal);
-      margin-bottom: 6px;
-    }
-
-    .event-card p {
-      font-size: 14px;
-      color: var(--text-muted);
       margin-bottom: 4px;
     }
 
-    /* ================= BUTTONS ================= */
+    .ad-card small {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
     .delete-btn {
       background: transparent;
       border: none;
       color: #b91c1c;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
-    /* ================= NAVBAR ================= */
-    .nav-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 22px;
-      color: var(--deep-teal);
-      cursor: pointer;
-    }
-
-    /* ================= MOBILE ================= */
     @media (max-width: 768px) {
-
-      .menu-toggle {
-        display: block;
-      }
-
-      .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 16px;
-      }
-
-      .nav-menu {
-        display: none;
-        width: 100%;
-        flex-direction: column;
-        background: #fff;
-        margin-top: 14px;
-        padding: 14px;
-        gap: 14px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      }
-
-      .nav-menu.active {
-        display: flex;
-      }
-
       .admin-container {
         padding: 30px 16px;
       }
-
       .admin-form {
         grid-template-columns: 1fr;
       }
-
-      textarea {
-        grid-column: span 1;
-      }
-
+      textarea,
       .admin-form button {
         grid-column: span 1;
-        width: 100%;
-      }
-
-      /* SWITCH LAYOUT */
-      .event-table {
-        display: none;
-      }
-
-      .event-cards {
-        display: flex;
       }
     }
   </style>
@@ -199,34 +137,18 @@
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
 <header class="navbar">
-  <div class="nav-left">
-    <button class="menu-toggle" id="menuToggle">
-      <i class="fa-solid fa-bars"></i>
-    </button>
-    <div>
-      <div class="logo">ClassTrack</div>
-      <div class="motto">Student Event Booking</div>
-    </div>
+  <div>
+    <div class="logo">ClassTrack</div>
+    <div class="motto">Student Dashboard</div>
   </div>
-
-  <nav class="nav-menu" id="navMenu">
-    <a href="events.html"><i class="fa-solid fa-calendar-days"></i> Events</a>
-    <a href="admin.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-  </nav>
 </header>
 
 <main class="admin-container">
 
-  <div class="page-header">
-    <h1>Book an Event</h1>
-    <p>Submit and manage your events</p>
-  </div>
-
-  <!-- BOOK EVENT -->
+  <!-- ================= BOOK EVENT ================= -->
   <div class="admin-section">
-    <h2>New Event</h2>
+    <h2>Book an Event</h2>
 
     <div class="admin-form">
       <input id="title" placeholder="Event Title">
@@ -240,15 +162,12 @@
       <input type="time" id="start">
       <input type="time" id="end">
       <textarea id="desc" rows="3" placeholder="Event Description"></textarea>
-      <button id="submitBtn">Submit Event</button>
+      <button id="submitEventBtn">Submit Event</button>
     </div>
   </div>
 
-  <!-- BOOKED EVENTS -->
   <div class="admin-section">
     <h2>Your Booked Events</h2>
-
-    <!-- DESKTOP TABLE -->
     <table class="event-table">
       <thead>
         <tr>
@@ -261,14 +180,28 @@
       </thead>
       <tbody id="eventBody"></tbody>
     </table>
+  </div>
 
-    <!-- MOBILE CARDS -->
-    <div class="event-cards" id="eventCards"></div>
+  <!-- ================= POST ADVERTISEMENT ================= -->
+  <div class="admin-section">
+    <h2>Post Advertisement</h2>
+
+    <div class="admin-form">
+      <input id="adClub" placeholder="Club / Committee Name">
+      <input id="adTitle" placeholder="Advertisement Title">
+      <textarea id="adDesc" rows="3" placeholder="Advertisement Description"></textarea>
+      <button id="postAdBtn">Post Advertisement</button>
+    </div>
+  </div>
+
+  <div class="admin-section">
+    <h2>Active Advertisements</h2>
+    <div class="ads" id="adsContainer"></div>
   </div>
 
 </main>
 
-<!-- ================= SCRIPT ================= -->
+<!-- ================= FIRESTORE + POPUP JS ================= -->
 <script type="module">
   import { initializeApp } from
     "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -293,28 +226,15 @@
   const db = getFirestore(app);
 
   const eventBody = document.getElementById("eventBody");
-  const eventCards = document.getElementById("eventCards");
+  const adsContainer = document.getElementById("adsContainer");
 
-  const submitBtn = document.getElementById("submitBtn");
-  const titleEl = document.getElementById("title");
-  const clubEl = document.getElementById("club");
-  const venueTypeEl = document.getElementById("venueType");
-  const venueEl = document.getElementById("venue");
-  const dateEl = document.getElementById("date");
-  const startEl = document.getElementById("start");
-  const endEl = document.getElementById("end");
-  const descEl = document.getElementById("desc");
-
+  /* ================= EVENTS ================= */
   async function loadEvents() {
     eventBody.innerHTML = "";
-    eventCards.innerHTML = "";
-
     const snap = await getDocs(collection(db, "events"));
 
     snap.forEach(d => {
       const e = d.data();
-
-      // DESKTOP ROW
       eventBody.innerHTML += `
         <tr>
           <td>${e.title}</td>
@@ -326,14 +246,59 @@
           </td>
         </tr>
       `;
+    });
 
-      // MOBILE CARD
-      eventCards.innerHTML += `
-        <div class="event-card">
-          <h4>${e.title}</h4>
-          <p><strong>Venue:</strong> ${e.venueType} ${e.venue}</p>
-          <p><strong>Date:</strong> ${e.date}</p>
-          <p><strong>Time:</strong> ${e.start} - ${e.end}</p>
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.onclick = async () => {
+        if (!confirm("Are you sure you want to delete this event?")) return;
+        await deleteDoc(doc(db, "events", btn.dataset.id));
+        alert("Event deleted successfully");
+        loadEvents();
+      };
+    });
+  }
+
+  document.getElementById("submitEventBtn").onclick = async () => {
+    if (!title.value || !club.value || !venue.value || !date.value || !start.value || !end.value) {
+      alert("Please fill all event details");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "events"), {
+        title: title.value,
+        club: club.value,
+        venueType: venueType.value,
+        venue: venue.value,
+        date: date.value,
+        start: start.value,
+        end: end.value,
+        description: desc.value,
+        createdAt: serverTimestamp()
+      });
+
+      alert("Event booked successfully!");
+      [title, club, venue, date, start, end, desc].forEach(i => i.value = "");
+      loadEvents();
+
+    } catch (err) {
+      alert("Error booking event");
+      console.error(err);
+    }
+  };
+
+  /* ================= ADS ================= */
+  async function loadAds() {
+    adsContainer.innerHTML = "";
+    const snap = await getDocs(collection(db, "student_ads"));
+
+    snap.forEach(d => {
+      const ad = d.data();
+      adsContainer.innerHTML += `
+        <div class="ad-card">
+          <h4>${ad.title}</h4>
+          <small>${ad.club}</small>
+          <p>${ad.description}</p>
           <button class="delete-btn" data-id="${d.id}">Delete</button>
         </div>
       `;
@@ -341,44 +306,40 @@
 
     document.querySelectorAll(".delete-btn").forEach(btn => {
       btn.onclick = async () => {
-        if (!confirm("Delete this event?")) return;
-        await deleteDoc(doc(db, "events", btn.dataset.id));
-        loadEvents();
+        if (!confirm("Delete this advertisement?")) return;
+        await deleteDoc(doc(db, "student_ads", btn.dataset.id));
+        alert("Advertisement deleted");
+        loadAds();
       };
     });
   }
 
-  submitBtn.onclick = async () => {
-    if (!titleEl.value || !clubEl.value || !venueEl.value ||
-        !dateEl.value || !startEl.value || !endEl.value) {
-      alert("Please fill all fields");
+  document.getElementById("postAdBtn").onclick = async () => {
+    if (!adClub.value || !adTitle.value || !adDesc.value) {
+      alert("Please fill all advertisement fields");
       return;
     }
 
-    await addDoc(collection(db, "events"), {
-      title: titleEl.value,
-      club: clubEl.value,
-      venueType: venueTypeEl.value,
-      venue: venueEl.value,
-      date: dateEl.value,
-      start: startEl.value,
-      end: endEl.value,
-      description: descEl.value,
-      createdAt: serverTimestamp()
-    });
+    try {
+      await addDoc(collection(db, "student_ads"), {
+        club: adClub.value,
+        title: adTitle.value,
+        description: adDesc.value,
+        createdAt: serverTimestamp()
+      });
 
-    [titleEl, clubEl, venueEl, dateEl, startEl, endEl, descEl]
-      .forEach(i => i.value = "");
+      alert("Advertisement posted successfully!");
+      adClub.value = adTitle.value = adDesc.value = "";
+      loadAds();
 
-    loadEvents();
+    } catch (err) {
+      alert("Error posting advertisement");
+      console.error(err);
+    }
   };
 
   loadEvents();
-
-  // HAMBURGER
-  document.getElementById("menuToggle").onclick = () => {
-    document.getElementById("navMenu").classList.toggle("active");
-  };
+  loadAds();
 </script>
 
 </body>

@@ -1,60 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notice Board | ClassTrack</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notice Board | ClassTrack</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <link rel="stylesheet" href="common.css">
+  <!-- Common Theme -->
+  <link rel="stylesheet" href="common.css">
 
-    <style>
-        /* FORCE ONE-LINE NOTICE */
-        .notice-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 24px;
-            background: var(--bg-card);
-            border-radius: 14px;
-            margin-bottom: 14px;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
-        }
+  <style>
+    /* ================= NOTICE ROW ================= */
+    .notice-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+      background: var(--bg-card);
+      border-radius: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    }
 
-        .notice-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-        }
+    .notice-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
 
-        .notice-left strong {
-            color: var(--deep-teal);
-            font-weight: 600;
-        }
+    .notice-left strong {
+      color: var(--deep-teal);
+      font-weight: 600;
+    }
 
-        .notice-left span {
-            color: var(--text-muted);
-            font-size: 14px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .notice-left span {
+      color: var(--text-muted);
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-        .notice-right {
-            font-size: 13px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-    </style>
+    .notice-right {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Empty state */
+    .empty {
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 40px;
+      font-size: 14px;
+    }
+  </style>
 </head>
+
 <body>
 
+<!-- ================= NAVBAR ================= -->
 <header class="navbar">
 
-  <!-- LEFT -->
   <div class="nav-left">
     <button class="menu-toggle" id="menuToggle">
       <i class="fa-solid fa-bars"></i>
@@ -66,60 +77,100 @@
     </div>
   </div>
 
-  <!-- NAV -->
   <nav class="nav-menu" id="navMenu">
     <a href="dashboard.html"><i class="fa-solid fa-house"></i> Home</a>
-    <a href="class.html" class="active"><i class="fa-solid fa-book"></i> Class</a>
+    <a href="class.html"><i class="fa-solid fa-book"></i> Class</a>
     <a href="lab.html"><i class="fa-solid fa-flask"></i> Lab</a>
-    <a href="notice.html"><i class="fa-solid fa-bullhorn"></i> Notice</a>
+    <a href="notice.html" class="active"><i class="fa-solid fa-bullhorn"></i> Notice</a>
     <a href="community.html"><i class="fa-solid fa-users"></i> Community</a>
-    <a href="events.html" class="active">
-  <i class="fa-solid fa-calendar-days"></i> Events
-</a>
+    <a href="events.html"><i class="fa-solid fa-calendar-days"></i> Events</a>
   </nav>
 
-  <!-- RIGHT -->
   <div class="nav-actions">
-    <button class="logout-btn" id="logoutBtn">Logout</button>
+    <button class="logout-btn">Logout</button>
   </div>
 
 </header>
 
+<!-- ================= CONTENT ================= -->
 <main class="page-container">
 
-    <div class="page-header">
-        <h1><i class="fa-solid fa-bullhorn"></i> Notice Board</h1>
-        <p>Official announcements from college clubs</p>
-    </div>
+  <div class="page-header">
+    <h1><i class="fa-solid fa-bullhorn"></i> Notice Board</h1>
+    <p>Official announcements from student clubs & committees</p>
+  </div>
 
-    <!-- NOTICE LIST (ONE LINE EACH) -->
+  <!-- NOTICES FROM FIRESTORE -->
+  <div id="noticeList"></div>
 
-    <div class="notice-row">
-        <div class="notice-left">
-            <strong>🚀 GDG Club</strong>
-            <span>Hackathon Workshop on Jan 5 at 5 PM</span>
-        </div>
-        <div class="notice-right available">Upcoming</div>
-    </div>
-
-    <div class="notice-row">
-        <div class="notice-left">
-            <strong>🎭 Cultural Committee</strong>
-            <span>Annual Fest Auditions – Register by Jan 12</span>
-        </div>
-        <div class="notice-right occupied">Registration Open</div>
-    </div>
-
-    <div class="notice-row">
-        <div class="notice-left">
-            <strong>⚽ Sports Club</strong>
-            <span>Inter-College Football Team Tryouts</span>
-        </div>
-        <div class="notice-right available">New</div>
-    </div>
+  <div class="empty" id="emptyState" style="display:none;">
+    No announcements available
+  </div>
 
 </main>
-<script>
+
+<!-- ================= SCRIPTS ================= -->
+<script type="module">
+  import { initializeApp } from
+    "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    query,
+    orderBy
+  } from
+    "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  /* FIREBASE CONFIG */
+  const firebaseConfig = {
+    apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
+    authDomain: "classtrack-87c00.firebaseapp.com",
+    projectId: "classtrack-87c00"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const noticeList = document.getElementById("noticeList");
+  const emptyState = document.getElementById("emptyState");
+
+  async function loadNotices() {
+    noticeList.innerHTML = "";
+
+    const q = query(
+      collection(db, "student_ads"),
+      orderBy("createdAt", "desc")
+    );
+
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      emptyState.style.display = "block";
+      return;
+    }
+
+    snap.forEach(doc => {
+      const ad = doc.data();
+
+      const row = document.createElement("div");
+      row.className = "notice-row";
+
+      row.innerHTML = `
+        <div class="notice-left">
+          <strong>📢 ${ad.club}</strong>
+          <span>${ad.title} — ${ad.description}</span>
+        </div>
+        <div class="notice-right available">New</div>
+      `;
+
+      noticeList.appendChild(row);
+    });
+  }
+
+  loadNotices();
+
+  /* MOBILE MENU */
   const menuToggle = document.getElementById("menuToggle");
   const navMenu = document.getElementById("navMenu");
 
