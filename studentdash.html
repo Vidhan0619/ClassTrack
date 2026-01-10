@@ -2,15 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book Event | ClassTrack</title>
 
-  <!-- Fonts -->
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- Common Theme -->
   <link rel="stylesheet" href="common.css">
 
   <style>
+    /* ================= CONTAINER ================= */
     .admin-container {
       max-width: 1100px;
       margin: auto;
@@ -27,6 +31,7 @@
       color: var(--deep-teal);
     }
 
+    /* ================= FORM ================= */
     .admin-form {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -59,7 +64,7 @@
       cursor: pointer;
     }
 
-    /* BOOKED EVENTS TABLE */
+    /* ================= DESKTOP TABLE ================= */
     .event-table {
       width: 100%;
       border-collapse: collapse;
@@ -83,15 +88,86 @@
       font-weight: 600;
     }
 
+    /* ================= MOBILE CARDS ================= */
+    .event-cards {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .event-card {
+      background: #fff;
+      padding: 18px;
+      border-radius: 16px;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.1);
+    }
+
+    .event-card h4 {
+      font-size: 16px;
+      color: var(--deep-teal);
+      margin-bottom: 6px;
+    }
+
+    .event-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    /* ================= BUTTONS ================= */
     .delete-btn {
       background: transparent;
       border: none;
       color: #b91c1c;
       font-weight: 700;
       cursor: pointer;
+      margin-top: 6px;
     }
 
+    /* ================= NAVBAR ================= */
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: var(--deep-teal);
+      cursor: pointer;
+    }
+
+    /* ================= MOBILE ================= */
     @media (max-width: 768px) {
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+      }
+
+      .nav-menu {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        background: #fff;
+        margin-top: 14px;
+        padding: 14px;
+        gap: 14px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      }
+
+      .nav-menu.active {
+        display: flex;
+      }
+
       .admin-container {
         padding: 30px 16px;
       }
@@ -100,18 +176,22 @@
         grid-template-columns: 1fr;
       }
 
-      .admin-form button {
-        grid-column: span 1;
-      }
-
       textarea {
         grid-column: span 1;
       }
 
+      .admin-form button {
+        grid-column: span 1;
+        width: 100%;
+      }
+
+      /* SWITCH LAYOUT */
       .event-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
+        display: none;
+      }
+
+      .event-cards {
+        display: flex;
       }
     }
   </style>
@@ -119,18 +199,26 @@
 
 <body>
 
-<!-- NAVBAR -->
+<!-- ================= NAVBAR ================= -->
 <header class="navbar">
-  <div>
-    <div class="logo">ClassTrack</div>
-    <div class="motto">Student Event Booking</div>
+  <div class="nav-left">
+    <button class="menu-toggle" id="menuToggle">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div>
+      <div class="logo">ClassTrack</div>
+      <div class="motto">Student Event Booking</div>
+    </div>
   </div>
-  <button class="logout-btn" onclick="logout()">Logout</button>
+
+  <nav class="nav-menu" id="navMenu">
+    <a href="events.html"><i class="fa-solid fa-calendar-days"></i> Events</a>
+    <a href="admin.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+  </nav>
 </header>
 
 <main class="admin-container">
 
-  <!-- HEADER -->
   <div class="page-header">
     <h1>Book an Event</h1>
     <p>Submit and manage your events</p>
@@ -143,20 +231,16 @@
     <div class="admin-form">
       <input id="title" placeholder="Event Title">
       <input id="club" placeholder="Club Name">
-
       <select id="venueType">
         <option value="Class">Class</option>
         <option value="Lab">Lab</option>
       </select>
-
       <input id="venue" placeholder="Class / Lab Name">
       <input type="date" id="date">
       <input type="time" id="start">
       <input type="time" id="end">
-
       <textarea id="desc" rows="3" placeholder="Event Description"></textarea>
-
-      <button onclick="submitEvent()">Submit Event</button>
+      <button id="submitBtn">Submit Event</button>
     </div>
   </div>
 
@@ -164,6 +248,7 @@
   <div class="admin-section">
     <h2>Your Booked Events</h2>
 
+    <!-- DESKTOP TABLE -->
     <table class="event-table">
       <thead>
         <tr>
@@ -176,16 +261,15 @@
       </thead>
       <tbody id="eventBody"></tbody>
     </table>
+
+    <!-- MOBILE CARDS -->
+    <div class="event-cards" id="eventCards"></div>
   </div>
 
 </main>
 
-<!-- ================= FIRESTORE SCRIPT ================= -->
+<!-- ================= SCRIPT ================= -->
 <script type="module">
-  if (sessionStorage.getItem("role") !== "student") {
-    location.href = "admin.html";
-  }
-
   import { initializeApp } from
     "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import {
@@ -199,7 +283,6 @@
   } from
     "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  /* FIREBASE */
   const firebaseConfig = {
     apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
     authDomain: "classtrack-87c00.firebaseapp.com",
@@ -209,7 +292,10 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  /* ELEMENTS */
+  const eventBody = document.getElementById("eventBody");
+  const eventCards = document.getElementById("eventCards");
+
+  const submitBtn = document.getElementById("submitBtn");
   const titleEl = document.getElementById("title");
   const clubEl = document.getElementById("club");
   const venueTypeEl = document.getElementById("venueType");
@@ -218,34 +304,41 @@
   const startEl = document.getElementById("start");
   const endEl = document.getElementById("end");
   const descEl = document.getElementById("desc");
-  const submitBtn = document.querySelector(".admin-form button");
-  const eventBody = document.getElementById("eventBody");
 
-  /* LOAD EVENTS */
   async function loadEvents() {
     eventBody.innerHTML = "";
+    eventCards.innerHTML = "";
+
     const snap = await getDocs(collection(db, "events"));
 
     snap.forEach(d => {
       const e = d.data();
-      const row = document.createElement("tr");
 
-      row.innerHTML = `
-        <td>${e.title}</td>
-        <td>${e.venueType} ${e.venue}</td>
-        <td>${e.date}</td>
-        <td>${e.start} - ${e.end}</td>
-        <td>
-          <button class="delete-btn" data-id="${d.id}">
-            Delete
-          </button>
-        </td>
+      // DESKTOP ROW
+      eventBody.innerHTML += `
+        <tr>
+          <td>${e.title}</td>
+          <td>${e.venueType} ${e.venue}</td>
+          <td>${e.date}</td>
+          <td>${e.start} - ${e.end}</td>
+          <td>
+            <button class="delete-btn" data-id="${d.id}">Delete</button>
+          </td>
+        </tr>
       `;
 
-      eventBody.appendChild(row);
+      // MOBILE CARD
+      eventCards.innerHTML += `
+        <div class="event-card">
+          <h4>${e.title}</h4>
+          <p><strong>Venue:</strong> ${e.venueType} ${e.venue}</p>
+          <p><strong>Date:</strong> ${e.date}</p>
+          <p><strong>Time:</strong> ${e.start} - ${e.end}</p>
+          <button class="delete-btn" data-id="${d.id}">Delete</button>
+        </div>
+      `;
     });
 
-    // attach delete handlers
     document.querySelectorAll(".delete-btn").forEach(btn => {
       btn.onclick = async () => {
         if (!confirm("Delete this event?")) return;
@@ -255,50 +348,37 @@
     });
   }
 
-  /* SUBMIT EVENT */
-  submitBtn.addEventListener("click", async () => {
-
-    // basic validation
-    if (
-      !titleEl.value ||
-      !clubEl.value ||
-      !venueEl.value ||
-      !dateEl.value ||
-      !startEl.value ||
-      !endEl.value
-    ) {
-      alert("Please fill all required fields");
+  submitBtn.onclick = async () => {
+    if (!titleEl.value || !clubEl.value || !venueEl.value ||
+        !dateEl.value || !startEl.value || !endEl.value) {
+      alert("Please fill all fields");
       return;
     }
 
-    try {
-      await addDoc(collection(db, "events"), {
-        title: titleEl.value.trim(),
-        club: clubEl.value.trim(),
-        venueType: venueTypeEl.value,
-        venue: venueEl.value.trim(),
-        date: dateEl.value,
-        start: startEl.value,
-        end: endEl.value,
-        description: descEl.value.trim(),
-        createdAt: serverTimestamp()
-      });
+    await addDoc(collection(db, "events"), {
+      title: titleEl.value,
+      club: clubEl.value,
+      venueType: venueTypeEl.value,
+      venue: venueEl.value,
+      date: dateEl.value,
+      start: startEl.value,
+      end: endEl.value,
+      description: descEl.value,
+      createdAt: serverTimestamp()
+    });
 
-      alert("Event booked successfully!");
+    [titleEl, clubEl, venueEl, dateEl, startEl, endEl, descEl]
+      .forEach(i => i.value = "");
 
-      // reset form
-      [titleEl, clubEl, venueEl, dateEl, startEl, endEl, descEl]
-        .forEach(i => i.value = "");
-
-      loadEvents();
-
-    } catch (err) {
-      console.error(err);
-      alert("Error submitting event");
-    }
-  });
+    loadEvents();
+  };
 
   loadEvents();
+
+  // HAMBURGER
+  document.getElementById("menuToggle").onclick = () => {
+    document.getElementById("navMenu").classList.toggle("active");
+  };
 </script>
 
 </body>

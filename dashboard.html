@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>ClassTrack</title>
 
@@ -20,41 +20,39 @@
   </head>
   <body>
     <!-- ===== NAVBAR ===== -->
-<header class="navbar">
+    <header class="navbar">
+      <!-- LEFT GROUP -->
+      <div class="nav-left">
+        <!-- Hamburger FIRST -->
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fa-solid fa-bars"></i>
+        </button>
 
-  <!-- LEFT GROUP -->
-  <div class="nav-left">
-    <!-- Hamburger FIRST -->
-    <button class="menu-toggle" id="menuToggle">
-      <i class="fa-solid fa-bars"></i>
-    </button>
+        <!-- Logo AFTER -->
+        <div class="logo-section">
+          <h2><span class="logo">ClassTrack</span></h2>
+          <p class="motto">Check availability before you walk in</p>
+        </div>
+      </div>
 
-    <!-- Logo AFTER -->
-    <div class="logo-section">
-      <h2><span class="logo">ClassTrack</span></h2>
-      <p class="motto">Check availability before you walk in</p>
-    </div>
-  </div>
+      <!-- NAV LINKS -->
+      <nav class="nav-menu" id="navMenu">
+        <a href="dashboard.html"><i class="fa-solid fa-house"></i> Home</a>
+        <a href="class.html"><i class="fa-solid fa-book"></i> Class</a>
+        <a href="lab.html"><i class="fa-solid fa-flask"></i> Lab</a>
+        <a href="notice.html"><i class="fa-solid fa-bullhorn"></i> Notice</a>
+        <a href="community.html"><i class="fa-solid fa-users"></i> Community</a>
+        <a href="events.html" class="active">
+          <i class="fa-solid fa-calendar-days"></i> Events
+        </a>
+        <a href="admin.html"><i class="fa-solid fa-chart-simple"></i> Admin</a>
+      </nav>
 
-  <!-- NAV LINKS -->
-  <nav class="nav-menu" id="navMenu">
-    <a href="dashboard.html"><i class="fa-solid fa-house"></i> Home</a>
-    <a href="class.html"><i class="fa-solid fa-book"></i> Class</a>
-    <a href="lab.html"><i class="fa-solid fa-flask"></i> Lab</a>
-    <a href="admin.html"><i class="fa-solid fa-chart-simple"></i> Analysis</a>
-    <a href="notice.html"><i class="fa-solid fa-bullhorn"></i> Notice</a>
-    <a href="community.html"><i class="fa-solid fa-users"></i> Community</a>
-    <a href="events.html" class="active">
-  <i class="fa-solid fa-calendar-days"></i> Events
-</a>
-
-  </nav>
-
-  <!-- RIGHT -->
-  <div class="nav-actions">
-    <button class="logout-btn" id="logoutBtn">Logout</button>
-  </div>
-</header>
+      <!-- RIGHT -->
+      <div class="nav-actions">
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+      </div>
+    </header>
 
     <!-- ===== MAIN ===== -->
     <main class="main">
@@ -134,14 +132,12 @@
         }
       });
 
+      const menuToggle = document.getElementById("menuToggle");
+      const navMenu = document.getElementById("navMenu");
 
-  const menuToggle = document.getElementById("menuToggle");
-  const navMenu = document.getElementById("navMenu");
-
-  menuToggle.addEventListener("click", () => {
-    navMenu.classList.toggle("active");
-  });
-
+      menuToggle.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
+      });
 
       // ================= DOM ELEMENTS =================
       const searchInput = document.getElementById("searchInput");
