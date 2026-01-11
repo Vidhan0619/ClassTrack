@@ -281,13 +281,90 @@
 
   /* ================= FIREBASE CONFIG ================= */
   const firebaseConfig = {
-    apiKey: "AIzaSyBLz8zqZUaHaHBIhccjHdCtCFcEzs3HVhY",
-    authDomain: "classtrack-87c00.firebaseapp.com",
-    projectId: "classtrack-87c00"
-  };
+  apiKey: "AIzaSyBkTWA1CVjbmiVAlusAiY6VhLTSZj61n6U",
+  authDomain: "classtrack-a452f.firebaseapp.com",
+  projectId: "classtrack-a452f"
+};
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  /* ======================================================
+   EVENT BACKEND LOGIC (ADDED — DOES NOT TOUCH OTHER CODE)
+====================================================== */
+
+const submitEventBtn = document.getElementById("submitEventBtn");
+const eventBody = document.getElementById("eventBody");
+
+/* ---------- ADD EVENT ---------- */
+submitEventBtn.addEventListener("click", async () => {
+  const title = document.getElementById("title").value.trim();
+  const club = document.getElementById("club").value.trim();
+  const venueType = document.getElementById("venueType").value;
+  const venue = document.getElementById("venue").value.trim();
+  const date = document.getElementById("date").value;
+  const start = document.getElementById("start").value;
+  const end = document.getElementById("end").value;
+  const desc = document.getElementById("desc").value.trim();
+
+  if (!title || !club || !venue || !date || !start || !end) {
+    alert("Please fill all required fields");
+    return;
+  }
+
+  await addDoc(collection(db, "events"), {
+    title,
+    club,
+    venueType,
+    venue,
+    date,
+    start,
+    end,
+    desc,
+    createdAt: serverTimestamp()
+  });
+
+  document.getElementById("title").value = "";
+  document.getElementById("club").value = "";
+  document.getElementById("venue").value = "";
+  document.getElementById("date").value = "";
+  document.getElementById("start").value = "";
+  document.getElementById("end").value = "";
+  document.getElementById("desc").value = "";
+
+  loadEvents();
+});
+
+/* ---------- LOAD EVENTS ---------- */
+async function loadEvents() {
+  eventBody.innerHTML = "";
+  const snap = await getDocs(collection(db, "events"));
+
+  snap.forEach(d => {
+    const e = d.data();
+    eventBody.innerHTML += `
+      <tr>
+        <td>${e.title}</td>
+        <td>${e.venueType} ${e.venue}</td>
+        <td>${e.date}</td>
+        <td>${e.start} - ${e.end}</td>
+        <td>
+          <button class="delete-btn" data-id="${d.id}">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.onclick = async () => {
+      await deleteDoc(doc(db, "events", btn.dataset.id));
+      loadEvents();
+    };
+  });
+}
+
+/* ---------- INITIAL LOAD ---------- */
+loadEvents();
+
 
   /* ================= DOM REFERENCES ================= */
   const postAdBtn = document.getElementById("postAdBtn");
@@ -326,28 +403,7 @@
   }
 
   /* ================= EVENTS (UNCHANGED) ================= */
-  const eventBody = document.getElementById("eventBody");
-
-  async function loadEvents() {
-    eventBody.innerHTML = "";
-    const snap = await getDocs(collection(db, "events"));
-
-    snap.forEach(d => {
-      const e = d.data();
-      eventBody.innerHTML += `
-        <tr>
-          <td>${e.title}</td>
-          <td>${e.venueType} ${e.venue}</td>
-          <td>${e.date}</td>
-          <td>${e.start} - ${e.end}</td>
-          <td>
-            <button class="delete-btn" data-id="${d.id}">Delete</button>
-          </td>
-        </tr>
-      `;
-    });
-  }
-
+  
   /* ================= LOAD NOTICES ================= */
   async function loadAds() {
     adsContainer.innerHTML = "";
